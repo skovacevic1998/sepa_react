@@ -1,9 +1,7 @@
 import * as React from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { BasicCard, Footer, NavBar, SimplePaper } from "./components";
-import Brightness4Icon from "@mui/icons-material/Brightness4";
-import Brightness7Icon from "@mui/icons-material/Brightness7";
-import IconButton from "@mui/material/IconButton";
+import { Login, Register, HomeRoutes } from "./components";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
@@ -31,23 +29,13 @@ function App() {
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
-        <NavBar
-          iconButton={
-            <IconButton
-              sx={{ ml: 1, mr: 2 }}
-              onClick={colorMode.toggleColorMode}
-              color="inherit"
-            >
-              {theme.palette.mode === "dark" ? (
-                <Brightness7Icon />
-              ) : (
-                <Brightness4Icon />
-              )}
-            </IconButton>
-          }
-        />
-        <SimplePaper />
-        <Footer defaultTheme={theme} />
+        <Router>
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/home/*" element={<HomeRoutes />} />
+          </Routes>
+        </Router>
       </ThemeProvider>
     </ColorModeContext.Provider>
   );

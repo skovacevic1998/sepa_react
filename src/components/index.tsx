@@ -8,3 +8,6 @@ export { UnosNaloga } from "./pages/UnosNaloga";
 export { Footer } from "./utilities/Footer";
 export { BasicCard } from "./utilities/BasicCard";
 export { SimplePaper } from "./utilities/SimplePaper";
+export { ErrorPage } from "./pages/ErrorPage";
+export { HomeRoutes } from "./pages/HomeRoutes";
+export { Profil } from "./pages/Profil";
