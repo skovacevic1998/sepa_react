@@ -4,16 +4,28 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import React from "react";
+import { styled } from "@mui/material/styles";
+import Paper from "@mui/material/Paper";
 import {
   Konsignacija,
   UnosNaloga,
   PregledNaloga,
   Homepage,
   Profil,
+  Footer,
 } from "./../../components";
 import { Routes, Route, useLocation } from "react-router-dom";
 
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
+
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: "center",
+  color: theme.palette.text.secondary,
+  margin: 40,
+}));
 
 export const HomeRoutes = () => {
   const location = useLocation();
@@ -65,14 +77,56 @@ export const HomeRoutes = () => {
                 colorMode={colorMode}
                 ColorModeContext={ColorModeContext}
                 theme={theme}
+                Item={Item}
               />
             }
           />
-          <Route path="/konsignacija" element={<Konsignacija />} />
-          <Route path="/pregled" element={<PregledNaloga />} />
-          <Route path="/unos" element={<UnosNaloga />} />
-          <Route path="/profil" element={<Profil />} />
+          <Route
+            path="/konsignacija"
+            element={
+              <Konsignacija
+                colorMode={colorMode}
+                ColorModeContext={ColorModeContext}
+                theme={theme}
+                Item={Item}
+              />
+            }
+          />
+          <Route
+            path="/pregled"
+            element={
+              <PregledNaloga
+                colorMode={colorMode}
+                ColorModeContext={ColorModeContext}
+                theme={theme}
+                Item={Item}
+              />
+            }
+          />
+          <Route
+            path="/unos"
+            element={
+              <UnosNaloga
+                colorMode={colorMode}
+                ColorModeContext={ColorModeContext}
+                theme={theme}
+                Item={Item}
+              />
+            }
+          />
+          <Route
+            path="/profil"
+            element={
+              <Profil
+                colorMode={colorMode}
+                ColorModeContext={ColorModeContext}
+                theme={theme}
+                Item={Item}
+              />
+            }
+          />
         </Routes>
+        <Footer defaultTheme={theme} />
       </ThemeProvider>
     </ColorModeContext.Provider>
   );

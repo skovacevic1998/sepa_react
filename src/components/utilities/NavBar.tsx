@@ -14,6 +14,7 @@ import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { IconButtonProps } from "@mui/material/IconButton";
 import { useNavigate } from "react-router-dom";
+import Logo from "./../../assets/vub_logo.png";
 
 const pages = ["Home", "Unos naloga", "Konsignacija", "Pregled naloga"];
 const settings = ["Profil", "Logout"];
@@ -82,24 +83,7 @@ export const NavBar: React.FC<NavBarProps> = ({ iconButton }) => {
       <AppBar position="relative">
         <Container maxWidth="xl">
           <Toolbar disableGutters>
-            <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
-            <Typography
-              variant="h6"
-              noWrap
-              component="a"
-              sx={{
-                mr: 2,
-                display: { xs: "none", md: "flex" },
-                fontFamily: "monospace",
-                fontWeight: 700,
-                letterSpacing: ".3rem",
-                color: "inherit",
-                textDecoration: "none",
-              }}
-            >
-              LOGO
-            </Typography>
-
+            <Avatar src={Logo} style={{ marginRight: 100 }} />
             <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
               <IconButton
                 size="large"
