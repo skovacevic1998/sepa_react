@@ -20,24 +20,16 @@ export const UnosNaloga: React.FC<ThemeProp> = ({
     <>
       <ColorModeContext.Provider value={colorMode}>
         <ThemeProvider theme={theme}>
-          <Grid container spacing={0} justifyContent={"center"} marginTop={2}>
-            <Grid width={"50%"} height={"100%"} xs={10}>
-              <Box
-                sx={{
-                  width: "100%",
-                  justifyContent: "center",
-                  textAlign: "center",
-                }}
-              >
-                <Typography variant="h1" gutterBottom>
-                  Unos naloga
+          <Grid container justifyContent="center">
+            <Grid item>
+              <Item>
+                <Typography variant="h2" fontWeight="bold">
+                  UNOS GOTOVINSKIH NALOGA
                 </Typography>
-              </Box>
-              <div
-                style={{ boxShadow: "5px 5px 15px #aeaead", marginBottom: 30 }}
-              >
+              </Item>
+              <Item>
                 <NalogInputForm Item={Item} />
-              </div>
+              </Item>
             </Grid>
           </Grid>
         </ThemeProvider>

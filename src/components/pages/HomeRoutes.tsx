@@ -1,11 +1,11 @@
 import IconButton from "@mui/material/IconButton";
 import { NavBar } from "../utilities/NavBar";
+import { Item } from "../utilities/Item";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import React from "react";
-import { styled } from "@mui/material/styles";
-import Paper from "@mui/material/Paper";
+
 import {
   Konsignacija,
   UnosNaloga,
@@ -17,15 +17,6 @@ import {
 import { Routes, Route, useLocation } from "react-router-dom";
 
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
-
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: "center",
-  color: theme.palette.text.secondary,
-  margin: 40,
-}));
 
 export const HomeRoutes = () => {
   const location = useLocation();

@@ -1,355 +1,408 @@
 import React from "react";
-import { Grid, TextField, Typography, Button } from "@mui/material";
-import { PregledTable } from "./PregledTable";
+import { useState } from "react";
+import {
+  Grid,
+  TextField,
+  Typography,
+  Button,
+  FormGroup,
+  Checkbox,
+  FormControlLabel,
+} from "@mui/material";
 import { KonsigTable } from "./KonsigTable";
 
 interface NalogInputProps {
   Item: any;
 }
 
-export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => (
-  <>
-    <Grid container justifyContent="right">
-      <Item>
-        <Grid item>
-          <TextField
-            disabled
-            id="outlined-basic"
-            value="EUR"
-            variant="outlined"
-            style={{ marginRight: 10, width: 65 }}
-          />
-          <TextField id="outlined-basic" label="Iznos" variant="outlined" />
-        </Grid>
-      </Item>
-    </Grid>
+export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
+  const [isCheckedUplata, setCheckedUplata] = useState(true);
+  const [isCheckedIsplata, setCheckedIsplata] = useState(false);
 
-    <Grid container justifyContent="space-between">
-      <Grid item xs={5}>
+  const handleCheckboxChange = (event: any) => {
+    const { name, checked } = event.target;
+    if (name === "checkboxUplata") {
+      setCheckedUplata(checked);
+      setCheckedIsplata(false); // Uncheck checkboxB if checkboxA is checked
+    } else if (name === "checkboxIsplata") {
+      setCheckedIsplata(checked);
+      setCheckedUplata(false); // Uncheck checkboxA if checkboxB is checked
+    }
+  };
+
+  return (
+    <>
+      <Grid container justifyContent="space-evenly" alignItems="center">
         <Item>
-          <Grid>
-            <Grid container marginBottom={2}>
-              <TextField
-                id="outlined-basic"
-                label="PLATITELJ"
-                variant="outlined"
-                style={{ width: "100%" }}
-              />
-            </Grid>
-            <Grid container justifyContent="space-between">
-              <TextField
-                id="outlined-basic"
-                label="Adresa"
-                variant="outlined"
-              />
-              <TextField
-                id="outlined-basic"
-                label="Mjesto"
-                variant="outlined"
-              />
-            </Grid>
-          </Grid>
-          <Grid marginBottom={6} marginTop={2}>
-            <Grid container marginBottom={2}>
-              <TextField
-                id="outlined-basic"
-                label="PRIMATELJ"
-                variant="outlined"
-                style={{ width: "100%" }}
-              />
-            </Grid>
-            <Grid container justifyContent="space-between">
-              <TextField
-                id="outlined-basic"
-                label="Adresa"
-                variant="outlined"
-              />
-              <TextField
-                id="outlined-basic"
-                label="Mjesto"
-                variant="outlined"
-              />
-            </Grid>
-          </Grid>
-          <Grid container justifyContent="space-between" marginTop={8}>
+          <Grid container spacing={4}>
             <Grid item>
-              <TextField
-                id="outlined-basic"
-                label="Šifra opisa plaćanja"
-                variant="outlined"
-              />
+              <FormGroup>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={isCheckedUplata}
+                      onChange={handleCheckboxChange}
+                    />
+                  }
+                  name="checkboxUplata"
+                  label="Gotovinska uplata"
+                />
+              </FormGroup>
             </Grid>
+
             <Grid item>
-              <TextField
-                id="outlined-basic"
-                label="Šifra namjene"
-                variant="outlined"
-              />
-            </Grid>
-          </Grid>
-          <Grid container justifyContent="space-between" marginTop={2}>
-            <Grid item>
-              <TextField
-                id="outlined-basic"
-                label="Datum izvršenja"
-                variant="outlined"
-              />
-            </Grid>
-            <Grid item>
-              <TextField
-                id="outlined-basic"
-                label="Datum podnošenja"
-                variant="outlined"
-              />
+              <FormGroup>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={isCheckedIsplata}
+                      onChange={handleCheckboxChange}
+                    />
+                  }
+                  name="checkboxIsplata"
+                  label="Gotovinska isplata"
+                />
+              </FormGroup>
             </Grid>
           </Grid>
         </Item>
-        <Grid item>
-          <Item>
-            <Typography
-              style={{ marginBottom: 20, fontWeight: "bold" }}
-              variant="h5"
-            >
-              Konsignacija
-            </Typography>
+        <Item>
+          <Grid container justifyContent="space-between" spacing={2}>
             <Grid item>
-              <KonsigTable />
+              <TextField
+                disabled
+                id="outlined-basic"
+                value="EUR"
+                variant="outlined"
+                style={{ width: 65 }}
+              />
             </Grid>
-          </Item>
-        </Grid>
+
+            <Grid item>
+              <TextField id="outlined-basic" label="Iznos" variant="outlined" />
+            </Grid>
+          </Grid>
+        </Item>
       </Grid>
 
-      <Grid item xs={5} justifyItems="center">
-        <Item>
-          <Grid marginBottom={6} marginTop={2}>
-            <Typography
-              style={{ marginBottom: 30, fontWeight: "bold" }}
-              variant="h5"
-            >
-              Račun platitelja
-            </Typography>
-            <Grid container marginBottom={2}>
-              <TextField
-                disabled
-                id="outlined-basic"
-                value="HR"
-                variant="outlined"
-                style={{ marginRight: 10, width: 70 }}
-                sx={{
-                  "& .MuiInputBase-root": {
-                    "& input": {
-                      textAlign: "center",
-                    },
-                  },
-                }}
-              />
-              <TextField
-                id="outlined-basic"
-                variant="outlined"
-                style={{ marginRight: 10, width: 70 }}
-              />
-              <TextField
-                id="outlined-basic"
-                label=""
-                variant="outlined"
-                style={{ marginRight: 10, width: "70%" }}
-              />
-            </Grid>
-            <Grid container>
-              <Typography
-                variant="h6"
-                style={{ marginRight: 120, marginLeft: 85 }}
-              >
-                Model
-              </Typography>
-              <Typography variant="h6">Poziv na broj platitelja</Typography>
-            </Grid>
-            <Grid container>
-              <TextField
-                disabled
-                id="outlined-basic"
-                value="HR"
-                variant="outlined"
-                style={{ marginRight: 10, width: 70 }}
-                sx={{
-                  "& .MuiInputBase-root": {
-                    "& input": {
-                      textAlign: "center",
-                    },
-                  },
-                }}
-              />
-              <TextField
-                disabled
-                id="outlined-basic"
-                variant="outlined"
-                value="99"
-                style={{ marginRight: 10, width: 70 }}
-                sx={{
-                  "& .MuiInputBase-root": {
-                    "& input": {
-                      textAlign: "center",
-                    },
-                  },
-                }}
-              />
-              <TextField
-                id="outlined-basic"
-                label=""
-                variant="outlined"
-                style={{ marginRight: 10, width: "70%" }}
-              />
-            </Grid>
-          </Grid>
-          <Grid marginBottom={6} marginTop={2}>
-            <Typography
-              style={{ marginBottom: 30, fontWeight: "bold" }}
-              variant="h5"
-            >
-              Račun primatelja
-            </Typography>
-            <Grid container marginBottom={2}>
-              <TextField
-                disabled
-                id="outlined-basic"
-                value="HR"
-                variant="outlined"
-                style={{ marginRight: 10, width: 70 }}
-                sx={{
-                  "& .MuiInputBase-root": {
-                    "& input": {
-                      textAlign: "center",
-                    },
-                  },
-                }}
-              />
-              <TextField
-                id="outlined-basic"
-                variant="outlined"
-                style={{ marginRight: 10, width: 70 }}
-              />
-              <TextField
-                id="outlined-basic"
-                label=""
-                variant="outlined"
-                style={{ marginRight: 10, width: "70%" }}
-              />
-            </Grid>
-            <Grid container>
-              <Typography variant="h6" style={{ marginRight: 110 }}>
-                Model
-              </Typography>
-              <Typography variant="h6">Poziv na broj platitelja</Typography>
-            </Grid>
-            <Grid container>
-              <TextField
-                disabled
-                id="outlined-basic"
-                value="HR"
-                variant="outlined"
-                style={{ marginRight: 10, width: 70 }}
-                sx={{
-                  "& .MuiInputBase-root": {
-                    "& input": {
-                      textAlign: "center",
-                    },
-                  },
-                }}
-              />
-              <TextField
-                id="outlined-basic"
-                variant="outlined"
-                style={{ marginRight: 10, width: 70 }}
-              />
-              <TextField
-                id="outlined-basic"
-                label=""
-                variant="outlined"
-                style={{ marginRight: 10, width: "70%" }}
-              />
-            </Grid>
-          </Grid>
-          <Grid container justifyContent="space-between">
-            <TextField
-              id="outlined-basic"
-              label="Opis plaćanja"
-              variant="outlined"
-              style={{ marginRight: 10, width: "100%", marginBottom: 10 }}
-            />
-          </Grid>
-          <Grid
-            container
-            justifyContent="space-between"
-            marginTop={2}
-            marginBottom={2}
-          >
-            <Grid container alignItems="center">
-              <Grid container alignItems="center">
-                <Typography variant="h6">Br. blag.</Typography>
+      <Grid container justifyContent="space-evenly">
+        <Grid item xs={12} md={5}>
+          <Item>
+            <Grid>
+              <Grid container marginBottom={2}>
                 <TextField
-                  disabled
                   id="outlined-basic"
-                  value="1"
-                  variant="outlined"
-                  style={{ width: 70, marginLeft: "1%", marginRight: "2%" }}
-                  sx={{
-                    "& .MuiInputBase-root": {
-                      "& input": {
-                        textAlign: "center",
-                      },
-                    },
-                  }}
-                />
-
-                <Typography variant="h6">Vrsta nak.</Typography>
-                <TextField
-                  disabled
-                  id="outlined-basic"
-                  value={2}
-                  variant="outlined"
-                  style={{
-                    textAlign: "center",
-                    width: 70,
-                    marginLeft: "2%",
-                  }}
-                  sx={{
-                    "& .MuiInputBase-root": {
-                      "& input": {
-                        textAlign: "center",
-                      },
-                    },
-                  }}
-                />
-              </Grid>
-              <Grid container marginTop={2} marginBottom={-2}>
-                <Typography variant="h6">Iznos naknade</Typography>
-                <TextField
-                  disabled
-                  id="outlined-basic"
+                  label="PLATITELJ"
                   variant="outlined"
                   style={{ width: "100%" }}
                 />
               </Grid>
+              <Grid container justifyContent="space-between">
+                <TextField
+                  id="outlined-basic"
+                  label="Adresa"
+                  variant="outlined"
+                />
+                <TextField
+                  id="outlined-basic"
+                  label="Mjesto"
+                  variant="outlined"
+                />
+              </Grid>
             </Grid>
-          </Grid>
-        </Item>
-      </Grid>
-      <Grid container justifyContent="right">
-        <Grid
-          item
-          margin={2}
-          padding={1}
-          style={{ boxShadow: "5px 5px 15px gray" }}
-        >
-          <Button
-            style={{ marginRight: 6, backgroundColor: "#e99516" }}
-            variant="contained"
-          >
-            Pokušaj ponovno
-          </Button>
-          <Button variant="contained">Spremi nalog</Button>
+            <Grid marginBottom={6} marginTop={2}>
+              <Grid container marginBottom={2}>
+                <TextField
+                  id="outlined-basic"
+                  label="PRIMATELJ"
+                  variant="outlined"
+                  style={{ width: "100%" }}
+                />
+              </Grid>
+              <Grid container justifyContent="space-between">
+                <TextField
+                  id="outlined-basic"
+                  label="Adresa"
+                  variant="outlined"
+                />
+                <TextField
+                  id="outlined-basic"
+                  label="Mjesto"
+                  variant="outlined"
+                />
+              </Grid>
+            </Grid>
+            <Grid container justifyContent="space-between" marginTop={8}>
+              <Grid item>
+                <TextField
+                  id="outlined-basic"
+                  label="Šifra opisa plaćanja"
+                  variant="outlined"
+                />
+              </Grid>
+              <Grid item>
+                <TextField
+                  id="outlined-basic"
+                  label="Šifra namjene"
+                  variant="outlined"
+                />
+              </Grid>
+            </Grid>
+            <Grid container justifyContent="space-between" marginTop={2}>
+              <Grid item>
+                <TextField
+                  id="outlined-basic"
+                  label="Datum izvršenja"
+                  variant="outlined"
+                />
+              </Grid>
+              <Grid item>
+                <TextField
+                  id="outlined-basic"
+                  label="Datum podnošenja"
+                  variant="outlined"
+                />
+              </Grid>
+            </Grid>
+          </Item>
+        </Grid>
+
+        <Grid item justifyItems="center">
+          <Item>
+            <Grid marginBottom={4} marginTop={0}>
+              <Typography style={{ fontWeight: "bold" }} variant="h5">
+                Račun platitelja
+              </Typography>
+              <Grid container marginBottom={2} justifyContent="space-between">
+                <TextField
+                  disabled
+                  id="outlined-basic"
+                  value="HR"
+                  variant="outlined"
+                  style={{ width: 70 }}
+                  sx={{
+                    "& .MuiInputBase-root": {
+                      "& input": {
+                        textAlign: "center",
+                      },
+                    },
+                  }}
+                />
+                <TextField
+                  id="outlined-basic"
+                  variant="outlined"
+                  style={{ width: 70 }}
+                />
+                <TextField
+                  id="outlined-basic"
+                  label=""
+                  variant="outlined"
+                  style={{ width: "70%" }}
+                />
+              </Grid>
+              <Grid container justifyContent="space-evenly">
+                <Typography variant="h6">Model</Typography>
+                <Typography variant="h6">Poziv na broj platitelja</Typography>
+              </Grid>
+              <Grid container justifyContent="space-between">
+                <TextField
+                  disabled
+                  id="outlined-basic"
+                  value="HR"
+                  variant="outlined"
+                  style={{ width: 70 }}
+                  sx={{
+                    "& .MuiInputBase-root": {
+                      "& input": {
+                        textAlign: "center",
+                      },
+                    },
+                  }}
+                />
+                <TextField
+                  disabled
+                  id="outlined-basic"
+                  variant="outlined"
+                  value="99"
+                  style={{ width: 70 }}
+                  sx={{
+                    "& .MuiInputBase-root": {
+                      "& input": {
+                        textAlign: "center",
+                      },
+                    },
+                  }}
+                />
+                <TextField
+                  id="outlined-basic"
+                  label=""
+                  variant="outlined"
+                  style={{ width: "70%" }}
+                />
+              </Grid>
+            </Grid>
+            <Grid marginBottom={6} marginTop={2} justifyContent="center">
+              <Typography style={{ fontWeight: "bold" }} variant="h5">
+                Račun primatelja
+              </Typography>
+              <Grid container marginBottom={2} justifyContent="space-between">
+                <TextField
+                  disabled
+                  id="outlined-basic"
+                  value="HR"
+                  variant="outlined"
+                  style={{ width: 70 }}
+                  sx={{
+                    "& .MuiInputBase-root": {
+                      "& input": {
+                        textAlign: "center",
+                      },
+                    },
+                  }}
+                />
+                <TextField
+                  id="outlined-basic"
+                  variant="outlined"
+                  style={{ width: 70 }}
+                />
+                <TextField
+                  id="outlined-basic"
+                  label=""
+                  variant="outlined"
+                  style={{ width: "70%" }}
+                />
+              </Grid>
+              <Grid container justifyContent="space-evenly">
+                <Typography variant="h6">Model</Typography>
+                <Typography variant="h6">Poziv na broj platitelja</Typography>
+              </Grid>
+              <Grid container justifyContent="space-between">
+                <TextField
+                  disabled
+                  id="outlined-basic"
+                  value="HR"
+                  variant="outlined"
+                  style={{ width: 70 }}
+                  sx={{
+                    "& .MuiInputBase-root": {
+                      "& input": {
+                        textAlign: "center",
+                      },
+                    },
+                  }}
+                />
+                <TextField
+                  id="outlined-basic"
+                  variant="outlined"
+                  style={{ width: 70 }}
+                />
+                <TextField
+                  id="outlined-basic"
+                  label=""
+                  variant="outlined"
+                  style={{ width: "70%" }}
+                />
+              </Grid>
+            </Grid>
+            <Grid container justifyContent="space-evenly" marginBottom={5}>
+              <TextField
+                id="outlined-basic"
+                label="Opis plaćanja"
+                variant="outlined"
+                style={{ width: "100%" }}
+              />
+            </Grid>
+            <Grid
+              container
+              justifyContent="space-between"
+              marginTop={2}
+              marginBottom={2}
+            >
+              <Grid container justifyContent="space-between">
+                <Grid container justifyContent="space-evenly">
+                  <Grid item alignItems="center" justifyContent="left">
+                    <Typography variant="h6">Broj blagajne:</Typography>
+                    <TextField
+                      disabled
+                      id="outlined-basic"
+                      value="1"
+                      variant="outlined"
+                      style={{ width: 70 }}
+                      sx={{
+                        "& .MuiInputBase-root": {
+                          "& input": {
+                            textAlign: "center",
+                          },
+                        },
+                      }}
+                    />
+                  </Grid>
+                  <Grid item alignItems="center" justifyContent="left">
+                    <Typography variant="h6">Vrsta naknade:</Typography>
+                    <TextField
+                      disabled
+                      id="outlined-basic"
+                      value={2}
+                      variant="outlined"
+                      style={{
+                        width: 70,
+                      }}
+                      sx={{
+                        "& .MuiInputBase-root": {
+                          "& input": {
+                            textAlign: "center",
+                          },
+                        },
+                      }}
+                    />
+                  </Grid>
+                  <Grid item alignItems="center">
+                    <Typography variant="h6">Iznos naknade:</Typography>
+                    <TextField
+                      disabled
+                      id="outlined-basic"
+                      variant="outlined"
+                      style={{ width: "100%" }}
+                    />
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Item>
+        </Grid>
+        <Grid container justifyContent="center">
+          <Item>
+            <Grid item justifyContent="center">
+              <Typography
+                style={{ marginBottom: 4, fontWeight: "bold" }}
+                variant="h5"
+              >
+                Konsignacija
+              </Typography>
+            </Grid>
+            <Grid item justifyContent="center">
+              <KonsigTable />
+            </Grid>
+          </Item>
+        </Grid>
+        <Grid container justifyContent="right">
+          <Item>
+            <Grid container justifyContent="space-between" spacing={2}>
+              <Grid item>
+                <Button
+                  style={{ backgroundColor: "#e99516" }}
+                  variant="contained"
+                >
+                  Pokušaj ponovno
+                </Button>
+              </Grid>
+              <Grid item>
+                <Button variant="contained">Spremi nalog</Button>
+              </Grid>
+            </Grid>
+          </Item>
         </Grid>
       </Grid>
-    </Grid>
-  </>
-);
+    </>
+  );
+};

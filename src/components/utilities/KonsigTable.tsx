@@ -222,7 +222,7 @@ export function KonsigTable() {
 
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>
-      <TableContainer sx={{ maxHeight: 180 }}>
+      <TableContainer sx={{ maxHeight: 340 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>

@@ -13,3 +13,4 @@ export { Profil } from "./pages/Profil";
 export { PregledTable } from "./utilities/PregledTable";
 export { NalogInputForm } from "./utilities/NalogInputForm";
 export { KonsigTable } from "./utilities/KonsigTable";
+export { Item } from "./utilities/Item";
