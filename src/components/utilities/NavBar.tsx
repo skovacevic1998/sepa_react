@@ -11,12 +11,17 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
 import { IconButtonProps } from "@mui/material/IconButton";
 import { useNavigate } from "react-router-dom";
 import Logo from "./../../assets/vub_logo.png";
 
-const pages = ["Home", "Unos naloga", "Konsignacija", "Pregled naloga"];
+const pages = [
+  "Home",
+  "Unos naloga",
+  "Učitavanje naloga",
+  "Konsignacija",
+  "Pregled naloga",
+];
 const settings = ["Profil", "Logout"];
 
 interface NavBarProps {
@@ -83,7 +88,7 @@ export const NavBar: React.FC<NavBarProps> = ({ iconButton }) => {
       <AppBar position="relative">
         <Container maxWidth="xl">
           <Toolbar disableGutters>
-            <Avatar src={Logo} style={{ marginRight: 100 }} />
+            <Avatar src={Logo} style={{ marginRight: "2%" }} />
             <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
               <IconButton
                 size="large"
@@ -120,26 +125,6 @@ export const NavBar: React.FC<NavBarProps> = ({ iconButton }) => {
                 ))}
               </Menu>
             </Box>
-
-            <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
-            <Typography
-              variant="h5"
-              noWrap
-              component="a"
-              href=""
-              sx={{
-                mr: 2,
-                display: { xs: "flex", md: "none" },
-                flexGrow: 1,
-                fontFamily: "monospace",
-                fontWeight: 700,
-                letterSpacing: ".3rem",
-                color: "inherit",
-                textDecoration: "none",
-              }}
-            >
-              LOGO
-            </Typography>
 
             <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
               {pages.map((page) => (

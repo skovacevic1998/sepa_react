@@ -1,6 +1,6 @@
 import React from "react";
 import { ThemeProvider } from "@mui/material/styles";
-import { Grid, Box, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { NalogInputForm } from "../utilities/NalogInputForm";
 
 interface ThemeProp {
@@ -20,8 +20,8 @@ export const UnosNaloga: React.FC<ThemeProp> = ({
     <>
       <ColorModeContext.Provider value={colorMode}>
         <ThemeProvider theme={theme}>
-          <Grid container justifyContent="center">
-            <Grid item>
+          <Grid container justifyContent="center" spacing={2}>
+            <Grid item xs={12} md={8} lg={12}>
               <Item>
                 <Typography variant="h2" fontWeight="bold">
                   UNOS GOTOVINSKIH NALOGA

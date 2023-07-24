@@ -6,10 +6,10 @@ import TextField from "@mui/material/TextField";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Logo from "./../../assets/vub_logo.png";
 
 function Copyright(props: any) {
   return (
@@ -54,11 +54,9 @@ export function Register() {
             alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
-          </Avatar>
+          <Avatar src={Logo} />
           <Typography component="h1" variant="h5">
-            Sign up
+            Register
           </Typography>
           <Box
             component="form"
@@ -116,12 +114,12 @@ export function Register() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign Up
+              Register
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
-                  Already have an account? Sign in
+                <Link href="/" variant="body2">
+                  Already have an account? Login.
                 </Link>
               </Grid>
             </Grid>
