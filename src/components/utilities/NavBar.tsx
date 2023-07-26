@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 import Logo from "./../../assets/vub_logo.png";
 
 const pages = [
-  "Home",
+  "Početna stranica",
   "Unos naloga",
   "Učitavanje naloga",
   "Konsignacija",
@@ -31,9 +31,8 @@ interface NavBarProps {
 export const NavBar: React.FC<NavBarProps> = ({ iconButton }) => {
   const navigate = useNavigate();
   const routeChange = (page: string) => {
-    console.log(page);
     let path = "";
-    if (page === "Home") {
+    if (page === "Početna stranica") {
       path = "/home";
     } else if (page === "Unos naloga") {
       path = "/home/unos";
@@ -42,10 +41,9 @@ export const NavBar: React.FC<NavBarProps> = ({ iconButton }) => {
     } else if (page === "Pregled naloga") {
       path = "/home/pregled";
     } else {
-      path = "*";
+      path = "/home/*";
     }
 
-    console.log(path);
     navigate(path);
   };
 

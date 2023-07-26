@@ -1,6 +1,5 @@
-import React from "react";
+import { Typography } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
-import { Grid, Typography } from "@mui/material";
 import { NalogInputForm } from "../utilities/NalogInputForm";
 
 interface ThemeProp {
@@ -8,6 +7,7 @@ interface ThemeProp {
   theme: any;
   ColorModeContext: any;
   Item: any;
+  getBackgroundColor: any;
 }
 
 export const UnosNaloga: React.FC<ThemeProp> = ({
@@ -15,25 +15,20 @@ export const UnosNaloga: React.FC<ThemeProp> = ({
   theme,
   ColorModeContext,
   Item,
+  getBackgroundColor,
 }) => {
   return (
-    <>
-      <ColorModeContext.Provider value={colorMode}>
-        <ThemeProvider theme={theme}>
-          <Grid container justifyContent="center" spacing={2}>
-            <Grid item xs={12} md={8} lg={12}>
-              <Item>
-                <Typography variant="h2" fontWeight="bold">
-                  UNOS GOTOVINSKIH NALOGA
-                </Typography>
-              </Item>
-              <Item>
-                <NalogInputForm Item={Item} />
-              </Item>
-            </Grid>
-          </Grid>
-        </ThemeProvider>
-      </ColorModeContext.Provider>
-    </>
+    <ColorModeContext.Provider value={colorMode}>
+      <ThemeProvider theme={theme}>
+        <Item>
+          <Typography variant="h2" fontWeight="bold" style={{ margin: "1rem" }}>
+            UNOS GOTOVINSKIH NALOGA
+          </Typography>
+        </Item>
+        <Item>
+          <NalogInputForm Item={Item} />
+        </Item>
+      </ThemeProvider>
+    </ColorModeContext.Provider>
   );
 };

@@ -20,7 +20,7 @@ export const Profil: React.FC<ThemeProp> = ({
       <ColorModeContext.Provider value={colorMode}>
         <ThemeProvider theme={theme}>
           <Grid container spacing={0} justifyContent={"center"} marginTop={2}>
-            <Grid width={"50%"} height={"100%"} xs={10}>
+            <Grid item width={"50%"} height={"100%"} xs={10}>
               <Item>Profil</Item>
             </Grid>
           </Grid>

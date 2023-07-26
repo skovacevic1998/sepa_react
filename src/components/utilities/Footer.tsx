@@ -21,9 +21,10 @@ function Copyright() {
 
 interface FooterProps {
   defaultTheme: any;
+  getBackgroundColor: any;
 }
 
-export function Footer({ defaultTheme }: FooterProps) {
+export function Footer({ defaultTheme, getBackgroundColor }: FooterProps) {
   return (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
@@ -33,10 +34,8 @@ export function Footer({ defaultTheme }: FooterProps) {
           py: 3,
           px: 2,
           mt: "auto",
-          backgroundColor: (theme) =>
-            theme.palette.mode === "light"
-              ? theme.palette.grey[200]
-              : theme.palette.grey[800],
+          backgroundColor: getBackgroundColor,
+          bottom: 0,
         }}
       >
         <Container maxWidth="sm">

@@ -14,3 +14,5 @@ export { PregledTable } from "./utilities/PregledTable";
 export { NalogInputForm } from "./utilities/NalogInputForm";
 export { KonsigTable } from "./utilities/KonsigTable";
 export { Item } from "./utilities/Item";
+export { FinanceMediaCard1 } from "./utilities/homepage/FinanceMediaCard1";
+export { FinanceMediaCard2 } from "./utilities/homepage/FinanceMediaCard2";

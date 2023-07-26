@@ -354,7 +354,7 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
               />
             </Grid>
           </Grid>
-          <Grid container marginBottom={6} xs>
+          <Grid container marginBottom={6}>
             <TextField
               id="outlined-basic"
               variant="outlined"
@@ -418,23 +418,25 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
         </Item>
       </Grid>
 
-      <Grid item xs={12} md={8} lg={12} justifyContent="center">
-        <Item>
-          <Grid item justifyContent="center">
-            <Typography
-              style={{ marginBottom: 4, fontWeight: "bold" }}
-              variant="h5"
-            >
-              Konsignacija
-            </Typography>
-          </Grid>
-          <Grid item justifyContent="center">
-            <KonsigTable />
-          </Grid>
-        </Item>
+      <Grid container justifyContent="center">
+        <Grid item xs={9} md={9} lg={9}>
+          <Item>
+            <Grid item justifyContent="center">
+              <Typography
+                style={{ marginBottom: 4, fontWeight: "bold" }}
+                variant="h5"
+              >
+                Konsignacija
+              </Typography>
+            </Grid>
+            <Grid item justifyContent="center">
+              <KonsigTable />
+            </Grid>
+          </Item>
+        </Grid>
       </Grid>
 
-      <Grid container xs={12} md={8} lg={12} justifyContent="right">
+      <Grid container justifyContent="right">
         <Grid item xs={12} md={8} lg={3} justifyContent="center">
           <Item>
             <Grid container justifyContent="space-evenly" spacing={2}>

@@ -9,6 +9,7 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import Logo from "./../../assets/vub_logo.png";
+import { Item } from "../utilities/Item";
 
 function Copyright(props: any) {
   return (
@@ -48,69 +49,76 @@ export function Login() {
   };
 
   return (
-    <div>
+    <Grid
+      container
+      direction="column"
+      alignItems="center"
+      justifyContent="center"
+      sx={{ minHeight: "100vh" }}
+    >
       <ThemeProvider theme={defaultTheme}>
-        <Container component="main" maxWidth="xs">
+        <Container component="main" maxWidth="sm">
           <CssBaseline />
-          <Box
-            sx={{
-              marginTop: 8,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <Avatar src={Logo} />
-            <Typography component="h1" variant="h5">
-              Login
-            </Typography>
+          <Item>
             <Box
-              component="form"
-              onSubmit={handleSubmit}
-              noValidate
-              sx={{ mt: 1 }}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
             >
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-              />
-
-              <Button
-                fullWidth
-                onClick={() => handleButtonClick("/home")}
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
+              <Avatar src={Logo} />
+              <Typography component="h1" variant="h5">
                 Login
-              </Button>
-              <Grid container justifyContent="right">
-                <Grid item>
-                  <Link href="/register" variant="body2">
-                    {"Don't have an account? Register."}
-                  </Link>
+              </Typography>
+              <Box
+                component="form"
+                onSubmit={handleSubmit}
+                noValidate
+                sx={{ mt: 1 }}
+              >
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
+                  autoFocus
+                />
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
+                />
+
+                <Button
+                  fullWidth
+                  onClick={() => handleButtonClick("/home")}
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                >
+                  Login
+                </Button>
+                <Grid container justifyContent="right">
+                  <Grid item>
+                    <Link href="/register" variant="body2">
+                      {"Don't have an account? Register."}
+                    </Link>
+                  </Grid>
                 </Grid>
-              </Grid>
+              </Box>
             </Box>
-          </Box>
+          </Item>
           <Copyright sx={{ mt: 8, mb: 4 }} />
         </Container>
       </ThemeProvider>
-    </div>
+    </Grid>
   );
 }
