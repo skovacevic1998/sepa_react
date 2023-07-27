@@ -1,4 +1,5 @@
 import React from "react";
+import { useLocation } from "react-router-dom";
 import IconButton from "@mui/material/IconButton";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -16,34 +17,32 @@ import { useNavigate } from "react-router-dom";
 import Logo from "./../../assets/vub_logo.png";
 
 const pages = [
-  "Početna stranica",
-  "Unos naloga",
-  "Učitavanje naloga",
-  "Konsignacija",
-  "Pregled naloga",
+  { label: "Početna stranica", path: "/home" },
+  { label: "Unos naloga", path: "/home/unos" },
+  { label: "Učitavanje naloga", path: "/home/ucitavanje" },
+  { label: "Konsignacija", path: "/home/konsignacija" },
+  { label: "Pregled naloga", path: "/home/pregled" },
 ];
 const settings = ["Profil", "Logout"];
 
 interface NavBarProps {
   iconButton: React.ReactElement<IconButtonProps>;
+  getBackgroundColorNavBar: any;
+  getTextColorNavBar: any;
 }
 
-export const NavBar: React.FC<NavBarProps> = ({ iconButton }) => {
+export const NavBar: React.FC<NavBarProps> = ({
+  iconButton,
+  getBackgroundColorNavBar,
+  getTextColorNavBar,
+}) => {
   const navigate = useNavigate();
-  const routeChange = (page: string) => {
-    let path = "";
-    if (page === "Početna stranica") {
-      path = "/home";
-    } else if (page === "Unos naloga") {
-      path = "/home/unos";
-    } else if (page === "Konsignacija") {
-      path = "/home/konsignacija";
-    } else if (page === "Pregled naloga") {
-      path = "/home/pregled";
-    } else {
-      path = "/home/*";
-    }
+  const location = useLocation();
 
+  // Your getTextColorNavBar function
+  const getTextColor = getTextColorNavBar();
+
+  const routeChange = (path: string) => {
     navigate(path);
   };
 
@@ -83,7 +82,12 @@ export const NavBar: React.FC<NavBarProps> = ({ iconButton }) => {
 
   return (
     <>
-      <AppBar position="relative">
+      <AppBar
+        position="relative"
+        sx={{
+          backgroundColor: getBackgroundColorNavBar,
+        }}
+      >
         <Container maxWidth="xl">
           <Toolbar disableGutters>
             <Avatar src={Logo} style={{ marginRight: "2%" }} />
@@ -117,8 +121,17 @@ export const NavBar: React.FC<NavBarProps> = ({ iconButton }) => {
                 }}
               >
                 {pages.map((page) => (
-                  <MenuItem key={page} onClick={handleCloseNavMenu}>
-                    <Typography textAlign="center">{page}</Typography>
+                  <MenuItem key={page.label} onClick={handleCloseNavMenu}>
+                    <Typography
+                      color={getTextColor}
+                      textAlign="center"
+                      style={{
+                        fontWeight:
+                          location.pathname === page.path ? "bold" : "normal",
+                      }}
+                    >
+                      {page.label}
+                    </Typography>
                   </MenuItem>
                 ))}
               </Menu>
@@ -127,11 +140,15 @@ export const NavBar: React.FC<NavBarProps> = ({ iconButton }) => {
             <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
               {pages.map((page) => (
                 <Button
-                  style={{ color: "white" }}
-                  onClick={() => routeChange(page)}
-                  key={page}
+                  style={{ color: getTextColor }}
+                  onClick={() => routeChange(page.path)}
+                  key={page.label}
+                  sx={{
+                    fontWeight:
+                      location.pathname === page.path ? "bold" : "normal",
+                  }}
                 >
-                  {page}
+                  {page.label}
                 </Button>
               ))}
             </Box>
@@ -161,7 +178,10 @@ export const NavBar: React.FC<NavBarProps> = ({ iconButton }) => {
               >
                 {settings.map((setting) => (
                   <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                    <Button onClick={() => sRouteChange(setting)}>
+                    <Button
+                      style={{ color: getTextColor }}
+                      onClick={() => sRouteChange(setting)}
+                    >
                       {setting}
                     </Button>
                   </MenuItem>

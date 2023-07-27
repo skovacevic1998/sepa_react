@@ -27,7 +27,7 @@ export const FinanceMediaCard3: React.FC<CardProp> = ({
         }}
       >
         <Typography gutterBottom variant="h5" component="div">
-          Vrijeme je novac
+          Podrška korisnicima
         </Typography>
       </CardContent>
     </Card>

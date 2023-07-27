@@ -1,17 +1,16 @@
-import React from "react";
 import CssBaseline from "@mui/material/CssBaseline";
-import { ThemeProvider } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Link from "@mui/material/Link";
+import { Grid } from "@mui/material";
 
 function Copyright() {
   return (
     <Typography variant="body2" color="text.secondary">
       {"Copyright © "}
       <Link color="inherit" href="https://mui.com/">
-        Your Website
+        VUB
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
@@ -20,13 +19,12 @@ function Copyright() {
 }
 
 interface FooterProps {
-  defaultTheme: any;
   getBackgroundColor: any;
 }
 
-export function Footer({ defaultTheme, getBackgroundColor }: FooterProps) {
+export function Footer({ getBackgroundColor }: FooterProps) {
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <>
       <CssBaseline />
       <Box
         component="footer"
@@ -36,15 +34,29 @@ export function Footer({ defaultTheme, getBackgroundColor }: FooterProps) {
           mt: "auto",
           backgroundColor: getBackgroundColor,
           bottom: 0,
+          textAlign: "center",
         }}
       >
         <Container maxWidth="sm">
-          <Typography variant="body1">
-            My sticky footer can be found here.
-          </Typography>
+          <Grid container justifyContent={"center"}>
+            <Grid item>
+              <Typography variant="body1" textAlign={"right"}>
+                Za više informacija kontaktirajte mail:
+              </Typography>
+            </Grid>
+            <Grid item>
+              <Typography
+                variant="body1"
+                fontWeight={"bold"}
+                textAlign={"left"}
+              >
+                skovacevic@vub.hr
+              </Typography>
+            </Grid>
+          </Grid>
           <Copyright />
         </Container>
       </Box>
-    </ThemeProvider>
+    </>
   );
 }

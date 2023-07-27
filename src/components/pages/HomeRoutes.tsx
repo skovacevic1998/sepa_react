@@ -1,10 +1,6 @@
-import IconButton from "@mui/material/IconButton";
-import { NavBar } from "../utilities/NavBar";
-import { Item } from "../utilities/Item";
+import React, { useMemo, useState, useEffect } from "react";
+import { Grid } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import Brightness4Icon from "@mui/icons-material/Brightness4";
-import Brightness7Icon from "@mui/icons-material/Brightness7";
-import React, { useMemo, useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import Finance1 from "../../assets/finance1.jpg";
 import {
@@ -16,48 +12,44 @@ import {
   Profil,
   UnosNaloga,
 } from "./../../components";
-import { Grid } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import { NavBar } from "../utilities/NavBar";
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import Brightness7Icon from "@mui/icons-material/Brightness7";
 
-// Define the ColorModeContextType
-interface ColorModeContextType {
-  toggleColorMode: () => void;
-  colorMode: "light" | "dark";
+interface HomeRouterProps {
+  Item: any;
+  ColorModeContext: any;
+  colorModeValue: any;
+  theme: any;
+  getBackgroundColor: any;
+  getBackgroundColorNavBar: any;
+  getTextColorNavBar: any;
 }
 
-const ColorModeContext = React.createContext<ColorModeContextType>({
-  toggleColorMode: () => {},
-  colorMode: "light",
-});
-
-export const HomeRoutes = () => {
-  const getBackgroundColor = () => {
-    return theme.palette.mode === "dark"
-      ? "rgba(20, 20, 20, 0.5)"
-      : "rgba(201, 201, 201, 0.5)";
-  };
-
+export const HomeRoutes: React.FC<HomeRouterProps> = ({
+  Item,
+  ColorModeContext,
+  colorModeValue,
+  theme,
+  getBackgroundColor,
+  getBackgroundColorNavBar,
+  getTextColorNavBar,
+}) => {
   const location = useLocation();
 
-  const [mode, setMode] = useState<"light" | "dark">("light");
+  // Save the selected theme to Local Storage when toggleColorMode is called
+  useEffect(() => {
+    localStorage.setItem("selectedTheme", colorModeValue.colorMode);
+  }, [colorModeValue.colorMode]);
 
-  const toggleColorMode = () => {
-    setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
-  };
-
-  const colorModeValue = useMemo(
-    () => ({ toggleColorMode, colorMode: mode }),
-    [mode]
-  );
-
-  const theme = useMemo(
-    () =>
-      createTheme({
-        palette: {
-          mode,
-        },
-      }),
-    [mode]
-  );
+  // Retrieve the selected theme from Local Storage on initial load
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("selectedTheme");
+    if (savedTheme === "dark" || savedTheme === "light") {
+      colorModeValue.toggleColorMode(savedTheme);
+    }
+  }, []);
 
   return (
     <div
@@ -66,7 +58,7 @@ export const HomeRoutes = () => {
         backgroundImage: `url(${Finance1})`,
         backgroundSize: "100% 100%",
         minHeight: "100vh",
-        display: "flex", // Set display to flex
+        display: "flex",
         flexDirection: "column",
       }}
     >
@@ -79,7 +71,7 @@ export const HomeRoutes = () => {
               left: 0,
               width: "100%",
               height: "100%",
-              background: getBackgroundColor(),
+              background: getBackgroundColor,
               backdropFilter: "blur(5px)",
               display: "flex",
               flexDirection: "column",
@@ -103,6 +95,8 @@ export const HomeRoutes = () => {
                       )}
                     </IconButton>
                   }
+                  getBackgroundColorNavBar={getBackgroundColorNavBar}
+                  getTextColorNavBar={getTextColorNavBar}
                 />
               </Grid>
 
@@ -113,9 +107,6 @@ export const HomeRoutes = () => {
                     path="/"
                     element={
                       <Homepage
-                        colorMode={colorModeValue}
-                        ColorModeContext={ColorModeContext}
-                        theme={theme}
                         Item={Item}
                         getBackgroundColor={getBackgroundColor}
                       />
@@ -123,70 +114,21 @@ export const HomeRoutes = () => {
                   />
                   <Route
                     path="/konsignacija"
-                    element={
-                      <Konsignacija
-                        colorMode={colorModeValue}
-                        ColorModeContext={ColorModeContext}
-                        theme={theme}
-                        Item={Item}
-                      />
-                    }
+                    element={<Konsignacija Item={Item} />}
                   />
                   <Route
                     path="/pregled"
-                    element={
-                      <PregledNaloga
-                        colorMode={colorModeValue}
-                        ColorModeContext={ColorModeContext}
-                        theme={theme}
-                        Item={Item}
-                      />
-                    }
+                    element={<PregledNaloga Item={Item} />}
                   />
-                  <Route
-                    path="/unos"
-                    element={
-                      <UnosNaloga
-                        colorMode={colorModeValue}
-                        ColorModeContext={ColorModeContext}
-                        theme={theme}
-                        Item={Item}
-                        getBackgroundColor={getBackgroundColor}
-                      />
-                    }
-                  />
-                  <Route
-                    path="/profil"
-                    element={
-                      <Profil
-                        colorMode={colorModeValue}
-                        ColorModeContext={ColorModeContext}
-                        theme={theme}
-                        Item={Item}
-                      />
-                    }
-                  />
-
-                  <Route
-                    path="/*"
-                    element={
-                      <ErrorPage
-                        colorMode={colorModeValue}
-                        ColorModeContext={ColorModeContext}
-                        theme={theme}
-                        Item={Item}
-                      />
-                    }
-                  />
+                  <Route path="/unos" element={<UnosNaloga Item={Item} />} />
+                  <Route path="/profil" element={<Profil Item={Item} />} />
+                  <Route path="/*" element={<ErrorPage Item={Item} />} />
                 </Routes>
               </Grid>
 
               {/* Footer */}
               <Grid item>
-                <Footer
-                  defaultTheme={theme}
-                  getBackgroundColor={getBackgroundColor}
-                />
+                <Footer getBackgroundColor={getBackgroundColor} />
               </Grid>
             </Grid>
           </div>
