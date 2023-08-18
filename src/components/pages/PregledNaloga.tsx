@@ -1,6 +1,6 @@
 import React from "react";
-import { Grid, Box, Typography } from "@mui/material";
-import { PregledTable } from "../utilities/PregledTable";
+import { Grid, Typography } from "@mui/material";
+import { PregledTable } from "../utilities/pregled/PregledTable";
 
 interface ThemeProp {
   Item: any;
@@ -10,18 +10,18 @@ export const PregledNaloga: React.FC<ThemeProp> = ({ Item }) => {
   return (
     <>
       <Grid container spacing={0} justifyContent={"center"} marginTop={2}>
-        <Grid item width={"50%"} height={"100%"} xs={10}>
-          <Box
-            sx={{
-              width: "100%",
-              justifyContent: "center",
-              textAlign: "center",
-            }}
-          >
-            <Typography variant="h1" gutterBottom>
-              Pregled naloga
+        <Grid item xs={12}>
+          <Item>
+            <Typography
+              variant="h2"
+              fontWeight="bold"
+              style={{ margin: "1rem" }}
+            >
+              PREGLED UNESENIH NALOGA
             </Typography>
-          </Box>
+          </Item>
+        </Grid>
+        <Grid item xs={10} sx={{ marginTop: -5 }}>
           <Item>
             <PregledTable />
           </Item>

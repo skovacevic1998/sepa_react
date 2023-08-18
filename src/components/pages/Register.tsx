@@ -9,27 +9,14 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Logo from "./../../assets/vub_logo.png";
-import { Item } from "../utilities/Item";
+import { Item } from "../utilities/default/Item";
+import { Footer } from "../utilities/default/Footer";
 
-function Copyright(props: any) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
+interface RegisterProps {
+  getBackgroundColor: any;
 }
 
-export function Register() {
+export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -93,6 +80,16 @@ export function Register() {
                   <TextField
                     required
                     fullWidth
+                    id="username"
+                    label="Username"
+                    name="username"
+                    autoComplete="username"
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    fullWidth
                     id="email"
                     label="Email Address"
                     name="email"
@@ -129,8 +126,8 @@ export function Register() {
             </Box>
           </Box>
         </Item>
-        <Copyright sx={{ mt: 5 }} />
+        <Footer getBackgroundColor={getBackgroundColor} />
       </Container>
     </Grid>
   );
-}
+};

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Grid } from "@mui/material";
 import { Routes, Route, useLocation } from "react-router-dom";
 import Finance1 from "../../assets/finance1.jpg";
@@ -7,13 +7,14 @@ import {
   Footer,
   Homepage,
   Konsignacija,
+  Loader,
   PregledNaloga,
   Profil,
   UcitavanjeNaloga,
   UnosNaloga,
 } from "./../../components";
 import IconButton from "@mui/material/IconButton";
-import { NavBar } from "../utilities/NavBar";
+import { NavBar } from "../utilities/default/NavBar";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 
@@ -24,12 +25,18 @@ interface ColorModeContextType {
 
 interface HomeRouterProps {
   Item: any;
-  colorModeValue: ColorModeContextType; // Assuming this is the correct type
-  theme: import("@mui/material/styles").Theme; // Properly import the Theme type
+  colorModeValue: ColorModeContextType;
+  theme: import("@mui/material/styles").Theme;
   getBackgroundColor: () => string;
   getBackgroundColorNavBar: () => string;
   getTextColorNavBar: () => string;
 }
+
+const rolesData = [
+  { id: 1, name: "Admin" },
+  { id: 2, name: "User" },
+  { id: 3, name: "Manager" },
+];
 
 export const HomeRoutes: React.FC<HomeRouterProps> = ({
   Item,
@@ -40,6 +47,36 @@ export const HomeRoutes: React.FC<HomeRouterProps> = ({
   getTextColorNavBar,
 }) => {
   const location = useLocation();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    const timeoutId = setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
+  }, [location]);
+
+  const [profileData, setProfileData] = useState({
+    name: "John",
+    surname: "Doe",
+    email: "john.doe@example.com",
+    age: 30,
+    location: "New York",
+    roles: [{ id: 1, name: "Admin" }],
+  });
+
+  const handleUpdateProfile = (data: Partial<typeof profileData>) => {
+    setProfileData((prevData) => ({
+      ...prevData,
+      ...data,
+    }));
+  };
+
+  if (loading) {
+    return <Loader text="Loading..." />;
+  }
 
   return (
     <div
@@ -108,7 +145,21 @@ export const HomeRoutes: React.FC<HomeRouterProps> = ({
                 path="/ucitavanje"
                 element={<UcitavanjeNaloga Item={Item} />}
               />
-              <Route path="/profil" element={<Profil Item={Item} />} />
+              <Route
+                path="/profil"
+                element={
+                  <Profil
+                    name={profileData.name}
+                    surname={profileData.surname}
+                    email={profileData.email}
+                    age={profileData.age}
+                    location={profileData.location}
+                    roles={rolesData}
+                    onUpdate={handleUpdateProfile}
+                    Item={Item}
+                  />
+                }
+              />
               <Route path="/*" element={<ErrorPage Item={Item} />} />
             </Routes>
           </Grid>

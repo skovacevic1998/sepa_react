@@ -14,7 +14,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { IconButtonProps } from "@mui/material/IconButton";
 import { useNavigate } from "react-router-dom";
-import Logo from "./../../assets/vub_logo.png";
+import Logo from "./../../../assets/vub_logo.png";
 
 const pages = [
   { label: "Početna stranica", path: "/home" },
@@ -39,7 +39,6 @@ export const NavBar: React.FC<NavBarProps> = ({
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Your getTextColorNavBar function
   const getTextColor = getTextColorNavBar();
 
   const routeChange = (path: string) => {

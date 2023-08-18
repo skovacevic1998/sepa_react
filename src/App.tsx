@@ -62,8 +62,16 @@ function App() {
       <ThemeProvider theme={theme}>
         <Router>
           <Routes>
-            <Route path="/" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            <Route
+              path="/"
+              element={
+                <Login getBackgroundColor={getBackgroundColor} theme={theme} />
+              }
+            />
+            <Route
+              path="/register"
+              element={<Register getBackgroundColor={getBackgroundColor} />}
+            />
             <Route
               path="/home/*"
               element={

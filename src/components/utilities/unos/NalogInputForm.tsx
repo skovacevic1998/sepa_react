@@ -9,7 +9,7 @@ import {
   Checkbox,
   FormControlLabel,
 } from "@mui/material";
-import { KonsigTable } from "./KonsigTable";
+import { KonsigTable } from "../konsignacija/KonsigTable";
 
 interface NalogInputProps {
   Item: any;
@@ -23,10 +23,10 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
     const { name, checked } = event.target;
     if (name === "checkboxUplata") {
       setCheckedUplata(checked);
-      setCheckedIsplata(false); // Uncheck checkboxB if checkboxA is checked
+      setCheckedIsplata(false);
     } else if (name === "checkboxIsplata") {
       setCheckedIsplata(checked);
-      setCheckedUplata(false); // Uncheck checkboxA if checkboxB is checked
+      setCheckedUplata(false);
     }
   };
 
@@ -419,11 +419,11 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
       </Grid>
 
       <Grid container justifyContent="center">
-        <Grid item xs={9} md={9} lg={9}>
+        <Grid item xs={10} md={10} lg={10}>
           <Item>
             <Grid item justifyContent="center">
               <Typography
-                style={{ marginBottom: 4, fontWeight: "bold" }}
+                style={{ marginBottom: 15, fontWeight: "bold" }}
                 variant="h5"
               >
                 Konsignacija

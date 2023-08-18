@@ -1,5 +1,5 @@
 import { Typography } from "@mui/material";
-import { NalogInputForm } from "../utilities/NalogInputForm";
+import { NalogInputForm } from "../utilities/unos/NalogInputForm";
 
 interface ThemeProp {
   Item: any;
