@@ -81,12 +81,30 @@ export const UcitavanjeNaloga: React.FC<UcitavanjeNalogaProps> = ({ Item }) => {
                   </Grid>
                 </Item>
               </Grid>
-              <Grid item marginBottom={"2%"} marginTop={"2%"} xs={10}>
-                <UcitaniNaloziTbl />
+              <Grid item xs={10}>
+                <Item>
+                  <Typography
+                    variant="h5"
+                    textAlign={"center"}
+                    marginBottom={1}
+                  >
+                    Učitani nalozi
+                  </Typography>
+                  <UcitaniNaloziTbl />
+                </Item>
               </Grid>
 
               <Grid item xs={10}>
-                <KonsigTable />
+                <Item>
+                  <Typography
+                    variant="h5"
+                    textAlign={"center"}
+                    marginBottom={1}
+                  >
+                    Konsignacija
+                  </Typography>
+                  <KonsigTable />
+                </Item>
               </Grid>
             </Grid>
           </Item>

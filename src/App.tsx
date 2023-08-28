@@ -1,6 +1,6 @@
 import * as React from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { Login, Register, HomeRoutes, Item } from "./components";
+import { Login, Register, HomeRoutes, Item, ErrorPage } from "./components";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 interface ColorModeContextType {
@@ -85,6 +85,7 @@ function App() {
                 />
               }
             />
+            <Route path="/*" element={<ErrorPage Item={Item} />} />
           </Routes>
         </Router>
       </ThemeProvider>

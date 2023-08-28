@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { setUser } from "./../../redux/userSlice";
+import { clearUser, setUser } from "./../../redux/userSlice";
 import { useNavigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -21,42 +21,52 @@ interface LoginProps {
 }
 
 interface User {
+  dob: number;
+  email: string;
   id: number;
   ime: string;
-  prezime: string;
-  email: string;
-  dob: number;
   lokacija: string;
+  password: string;
+  prezime: string;
   roles: string;
+  username: string;
 }
 
 export const Login: React.FC<LoginProps> = ({ getBackgroundColor, theme }) => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loginFailed, setLoginFailed] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const handleFocus = () => {
+    setLoginFailed(false);
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     try {
-      const response = await axios.post("/api/login", {
-        email: formData.email,
-        password: formData.password,
+      const response = await axios.post("http://localhost:8080/api/login", {
+        email,
+        password,
       });
 
-      if (response.status === 200) {
+      if (response.data && response.status === 200) {
         const userData: User = response.data;
         dispatch(setUser(userData));
-
         navigate("/home");
       } else {
+        dispatch(clearUser());
+        setLoginFailed(true);
+        navigate("/");
         throw new Error("Login failed");
       }
     } catch (error) {
+      dispatch(clearUser());
+      setLoginFailed(true);
+      navigate("/");
       console.error("Login error:", error);
     }
   };
@@ -78,8 +88,8 @@ export const Login: React.FC<LoginProps> = ({ getBackgroundColor, theme }) => {
           style={{ minHeight: "100vh" }}
         >
           <Grid item xs={12} sm={8} md={6} lg={4}>
-            <Item>
-              <Container component="main" maxWidth="xs">
+            <Container component="main" maxWidth="xs">
+              <Item>
                 <CssBaseline />
                 <div
                   style={{
@@ -107,10 +117,10 @@ export const Login: React.FC<LoginProps> = ({ getBackgroundColor, theme }) => {
                       name="email"
                       autoComplete="email"
                       autoFocus
-                      value={formData.email}
-                      onChange={(e) =>
-                        setFormData({ ...formData, email: e.target.value })
-                      }
+                      value={email}
+                      onFocus={handleFocus}
+                      error={loginFailed}
+                      onChange={(e) => setEmail(e.target.value)}
                     />
                     <TextField
                       margin="normal"
@@ -121,10 +131,10 @@ export const Login: React.FC<LoginProps> = ({ getBackgroundColor, theme }) => {
                       type="password"
                       id="password"
                       autoComplete="current-password"
-                      value={formData.password}
-                      onChange={(e) =>
-                        setFormData({ ...formData, password: e.target.value })
-                      }
+                      value={password}
+                      onFocus={handleFocus}
+                      error={loginFailed}
+                      onChange={(e) => setPassword(e.target.value)}
                     />
                     <Button
                       fullWidth
@@ -143,8 +153,8 @@ export const Login: React.FC<LoginProps> = ({ getBackgroundColor, theme }) => {
                     </Grid>
                   </Box>
                 </div>
-              </Container>
-            </Item>
+              </Item>
+            </Container>
             <Footer getBackgroundColor={getBackgroundColor} />
           </Grid>
         </Grid>

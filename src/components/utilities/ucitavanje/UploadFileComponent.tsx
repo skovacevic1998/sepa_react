@@ -40,20 +40,20 @@ export const UploadFileComponent: React.FC<UploadFileComponentProps> = ({
           component="span"
           startIcon={<CloudUploadIcon />}
         >
-          Upload File
+          Učitaj datoteku
         </Button>
       </label>
       {selectedFile && (
         <Box mt={2}>
           <Typography variant="body1">
-            Selected File: {selectedFile.name}
+            Odabrana datoteka: {selectedFile.name}
           </Typography>
           <Button
             variant="outlined"
             color="primary"
             onClick={handleUploadClick}
           >
-            Upload
+            Učitaj
           </Button>
         </Box>
       )}

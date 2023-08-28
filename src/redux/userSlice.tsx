@@ -8,6 +8,7 @@ interface User {
   dob: number;
   lokacija: string;
   roles: string;
+  username: string;
 }
 
 interface UserState {
@@ -22,15 +23,24 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<User | null>) => {
-      state.currentUser = action.payload;
+    setUser: (state, action: PayloadAction<Partial<User>>) => {
+      state.currentUser = {
+        ...state.currentUser!,
+        ...action.payload,
+      };
     },
     clearUser: (state) => {
       state.currentUser = null;
     },
+    updateUser: (state, action: PayloadAction<Partial<User>>) => {
+      state.currentUser = {
+        ...state.currentUser!,
+        ...action.payload,
+      };
+    },
   },
 });
 
-export const { setUser, clearUser } = userSlice.actions;
+export const { setUser, clearUser, updateUser } = userSlice.actions;
 
 export default userSlice.reducer;

@@ -17,6 +17,9 @@ import IconButton from "@mui/material/IconButton";
 import { NavBar } from "../utilities/default/NavBar";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../redux/store";
+import { setUser } from "../../redux/userSlice";
 
 interface ColorModeContextType {
   toggleColorMode: () => void;
@@ -32,11 +35,16 @@ interface HomeRouterProps {
   getTextColorNavBar: () => string;
 }
 
-const rolesData = [
-  { id: 1, name: "Admin" },
-  { id: 2, name: "User" },
-  { id: 3, name: "Manager" },
-];
+interface User {
+  id: number;
+  ime: string;
+  prezime: string;
+  email: string;
+  dob: number;
+  lokacija: string;
+  roles: string;
+  username: string;
+}
 
 export const HomeRoutes: React.FC<HomeRouterProps> = ({
   Item,
@@ -49,6 +57,9 @@ export const HomeRoutes: React.FC<HomeRouterProps> = ({
   const location = useLocation();
   const [loading, setLoading] = useState(true);
 
+  // Use useDispatch to get the dispatch function from Redux
+  const dispatch = useDispatch();
+
   useEffect(() => {
     setLoading(true);
     const timeoutId = setTimeout(() => {
@@ -58,20 +69,18 @@ export const HomeRoutes: React.FC<HomeRouterProps> = ({
     return () => clearTimeout(timeoutId);
   }, [location]);
 
-  const [profileData, setProfileData] = useState({
-    name: "John",
-    surname: "Doe",
-    email: "john.doe@example.com",
-    age: 30,
-    location: "New York",
-    roles: [{ id: 1, name: "Admin" }],
-  });
+  // Get the user data from the Redux store
+  const userData = useSelector((state: RootState) => state.user.currentUser);
 
-  const handleUpdateProfile = (data: Partial<typeof profileData>) => {
-    setProfileData((prevData) => ({
-      ...prevData,
-      ...data,
-    }));
+  const handleUpdateProfile = (data: Partial<User>) => {
+    console.log(userData);
+    if (userData) {
+      const updatedUserData: User = {
+        ...userData,
+        ...data,
+      };
+      dispatch(setUser(updatedUserData));
+    }
   };
 
   if (loading) {
@@ -149,12 +158,13 @@ export const HomeRoutes: React.FC<HomeRouterProps> = ({
                 path="/profil"
                 element={
                   <Profil
-                    name={profileData.name}
-                    surname={profileData.surname}
-                    email={profileData.email}
-                    age={profileData.age}
-                    location={profileData.location}
-                    roles={rolesData}
+                    ime={userData?.ime}
+                    prezime={userData?.prezime}
+                    email={userData?.email}
+                    dob={userData?.dob}
+                    lokacija={userData?.lokacija}
+                    roles={userData?.roles}
+                    username={userData?.username}
                     onUpdate={handleUpdateProfile}
                     Item={Item}
                   />

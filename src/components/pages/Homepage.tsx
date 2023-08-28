@@ -165,9 +165,9 @@ export const Homepage: React.FC<ThemeProp> = ({ Item, getBackgroundColor }) => {
                       }}
                     >
                       <Typography variant="h6">
-                        Naše usluge jamče povećanje učinkovitosti vremena za
-                        10%, dostupne 24/7 tijekom cijelog tjedna, s brzom i
-                        jednostavnom podrškom.
+                        Jamčimo povećanje učinkovitosti vremena čak i do 10% za
+                        sve usluge koje aplikacija nudi, dostupne 24/7 svakog
+                        dana u godini.
                       </Typography>
                     </div>
                   </Grid>

@@ -1,5 +1,5 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import IconButton from "@mui/material/IconButton";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -13,8 +13,10 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { IconButtonProps } from "@mui/material/IconButton";
-import { useNavigate } from "react-router-dom";
 import Logo from "./../../../assets/vub_logo.png";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
+import { clearUser } from "../../../redux/userSlice";
 
 const pages = [
   { label: "Početna stranica", path: "/home" },
@@ -36,24 +38,31 @@ export const NavBar: React.FC<NavBarProps> = ({
   getBackgroundColorNavBar,
   getTextColorNavBar,
 }) => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
   const getTextColor = getTextColorNavBar();
 
+  const userData = useSelector((state: RootState) => state.user.currentUser);
+
   const routeChange = (path: string) => {
-    navigate(path);
+    if (userData) {
+      navigate(path);
+    }
   };
 
   const sRouteChange = (settingName: string) => {
-    let path = "";
     if (settingName === "Profil") {
-      path = "/home/profil";
+      routeChange("/home/profil");
     } else if (settingName === "Logout") {
-      path = "/";
+      dispatch(clearUser());
+      navigate("/");
     }
+  };
 
-    navigate(path);
+  const sRouteChangeNav = (page: any) => {
+    routeChange(page.path);
   };
 
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
@@ -129,7 +138,9 @@ export const NavBar: React.FC<NavBarProps> = ({
                           location.pathname === page.path ? "bold" : "normal",
                       }}
                     >
-                      {page.label}
+                      <Button onClick={() => sRouteChangeNav(page)}>
+                        {page.label}
+                      </Button>
                     </Typography>
                   </MenuItem>
                 ))}

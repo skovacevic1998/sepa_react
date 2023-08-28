@@ -2,56 +2,96 @@ import React, { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import PersonIcon from "@mui/icons-material/Person";
-//import { useSelector } from "react-redux";
-//import { RootState } from "../../redux/store";
-
-interface Role {
-  id: number;
-  name: string;
-}
+import { useDispatch, useSelector } from "react-redux";
+import { updateUser } from "../../redux/userSlice";
+import { RootState } from "../../redux/store";
+import axios from "axios";
 
 interface ProfilProps {
-  name: string;
-  surname: string;
-  email: string;
-  age: number;
-  location: string;
-  roles: Role[];
+  ime: string | undefined;
+  prezime: string | undefined;
+  email: string | undefined;
+  dob: number | undefined;
+  lokacija: string | undefined;
+  roles: string | undefined;
+  username: string | undefined;
   onUpdate: (data: Partial<ProfilProps>) => void;
   Item: any;
 }
 
+interface User {
+  id: number;
+  ime: string;
+  prezime: string;
+  email: string;
+  dob: number;
+  lokacija: string;
+  roles: string;
+  username: string;
+}
+
 export const Profil: React.FC<ProfilProps> = ({
-  name,
-  surname,
+  ime,
+  prezime,
   email,
-  age,
-  location,
+  dob,
+  lokacija,
   roles,
+  username,
   onUpdate,
   Item,
 }) => {
-  //const user = useSelector((state: RootState) => state.user.currentUser);
-
   const [isEditing, setIsEditing] = useState(false);
   const [updatedData, setUpdatedData] = useState<Partial<ProfilProps>>({
-    name,
-    surname,
+    ime,
+    prezime,
     email,
-    age,
-    location,
+    dob,
+    lokacija,
+    roles,
+    username,
   });
 
-  const handleUpdate = () => {
-    onUpdate(updatedData);
-    setIsEditing(false);
+  const dispatch = useDispatch();
+  const currentUser = useSelector((state: RootState) => state.user.currentUser);
+
+  const handleUpdate = async () => {
+    if (currentUser && currentUser.id !== undefined) {
+      const updatedUserData: Partial<User> = {
+        id: currentUser.id,
+        ime: updatedData.ime || currentUser.ime,
+        prezime: updatedData.prezime || currentUser.prezime,
+        email: updatedData.email || currentUser.email,
+        dob: updatedData.dob || currentUser.dob,
+        lokacija: updatedData.lokacija || currentUser.lokacija,
+        roles: updatedData.roles || currentUser.roles,
+        username: updatedData.username || currentUser.username,
+      };
+
+      try {
+        dispatch(updateUser(updatedUserData));
+
+        const response = await axios.put(
+          "http://localhost:8080/api/updateUser",
+          {
+            email,
+            updatedUserData,
+          }
+        );
+
+        console.log("User profile updated successfully:", response.data);
+
+        setIsEditing(false);
+      } catch (error) {
+        console.error("Error updating user profile:", error);
+      }
+    }
   };
 
   return (
@@ -99,15 +139,22 @@ export const Profil: React.FC<ProfilProps> = ({
           <Grid item xs={5}>
             <Item>
               <Typography component="h1" variant="h2" textAlign={"center"}>
-                Korisnički profil
+                KORISNIČKI PROFIL
               </Typography>
             </Item>
           </Grid>
         </Grid>
 
-        <Grid item xs={5}>
+        <Grid item xs={5} marginTop={-5}>
           <Item>
-            <CssBaseline />
+            <Typography
+              component="h1"
+              variant="h4"
+              textAlign={"center"}
+              marginBottom={2}
+            >
+              Prijavljeni korisnik: {updatedData.username}
+            </Typography>
             <Box
               sx={{
                 display: "flex",
@@ -115,7 +162,7 @@ export const Profil: React.FC<ProfilProps> = ({
                 alignItems: "center",
               }}
             >
-              <Box component="form" noValidate sx={{ mt: 3 }}>
+              <Box component="form" noValidate sx={{ mt: 2 }}>
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>
                     <TextField
@@ -126,9 +173,9 @@ export const Profil: React.FC<ProfilProps> = ({
                       id="imeKorisnika"
                       label="Korisničko ime"
                       autoFocus
-                      value={updatedData.name || ""}
+                      value={updatedData.ime || ""}
                       onChange={(e) =>
-                        setUpdatedData({ ...updatedData, name: e.target.value })
+                        setUpdatedData({ ...updatedData, ime: e.target.value })
                       }
                       disabled={!isEditing}
                     />
@@ -141,11 +188,11 @@ export const Profil: React.FC<ProfilProps> = ({
                       label="Korisničko prezime"
                       name="prezime"
                       autoComplete="Prezime"
-                      value={updatedData.surname || ""}
+                      value={updatedData.prezime || ""}
                       onChange={(e) =>
                         setUpdatedData({
                           ...updatedData,
-                          surname: e.target.value,
+                          prezime: e.target.value,
                         })
                       }
                       disabled={!isEditing}
@@ -177,11 +224,11 @@ export const Profil: React.FC<ProfilProps> = ({
                       label="Godina rođenja"
                       name="korisnickaDob"
                       type="number"
-                      value={updatedData.age || ""}
+                      value={updatedData.dob || ""}
                       onChange={(e) =>
                         setUpdatedData({
                           ...updatedData,
-                          age: parseInt(e.target.value),
+                          dob: parseInt(e.target.value),
                         })
                       }
                       disabled={!isEditing}
@@ -195,11 +242,11 @@ export const Profil: React.FC<ProfilProps> = ({
                       label="Lokacija"
                       name="lokacija"
                       autoComplete="lokacija"
-                      value={updatedData.location || ""}
+                      value={updatedData.lokacija || ""}
                       onChange={(e) =>
                         setUpdatedData({
                           ...updatedData,
-                          location: e.target.value,
+                          lokacija: e.target.value,
                         })
                       }
                       disabled={!isEditing}
@@ -209,7 +256,7 @@ export const Profil: React.FC<ProfilProps> = ({
                     <FormControl component="fieldset">
                       <FormLabel component="legend">
                         <Typography variant="h5">
-                          Aktivne role: {roles.join(", ")}
+                          Aktivne role: {roles}
                         </Typography>
                       </FormLabel>
                     </FormControl>
