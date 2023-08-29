@@ -11,19 +11,47 @@ import Container from "@mui/material/Container";
 import Logo from "./../../assets/vub_logo.png";
 import { Item } from "../utilities/default/Item";
 import { Footer } from "../utilities/default/Footer";
+import { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 interface RegisterProps {
   getBackgroundColor: any;
 }
 
 export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const [imeRegister, setImeRegister] = useState("");
+  const [prezimeRegister, setPrezimeRegister] = useState("");
+  const [usernameRegister, setUsernameRegister] = useState("");
+  const [lokacijaRegister, setLokacijaRegister] = useState("");
+  const [emailRegister, setEmailRegister] = useState("");
+  const [passwordRegister, setPasswordRegister] = useState("");
+  const [rePasswordRegister, setRePasswordRegister] = useState("");
+
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+
+    try {
+      const response = await axios.post("http://localhost:8080/api/register", {
+        imeRegister,
+        prezimeRegister,
+        usernameRegister,
+        lokacijaRegister,
+        emailRegister,
+        passwordRegister,
+        rePasswordRegister,
+      });
+
+      if (response.data && response.status === 200) {
+        navigate("/");
+      } else {
+        throw new Error("Register failed");
+      }
+    } catch (error) {
+      console.error("Register error:", error);
+    }
   };
 
   return (
@@ -46,7 +74,7 @@ export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
           >
             <Avatar src={Logo} />
             <Typography component="h1" variant="h5">
-              Register
+              Registracija korisnika
             </Typography>
             <Box
               component="form"
@@ -57,54 +85,75 @@ export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
                   <TextField
-                    autoComplete="given-name"
-                    name="firstName"
+                    name="imeRegister"
                     required
                     fullWidth
-                    id="firstName"
-                    label="First Name"
+                    id="imeRegister"
+                    label="Ime"
                     autoFocus
+                    onChange={(e) => setImeRegister(e.target.value)}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField
                     required
                     fullWidth
-                    id="lastName"
-                    label="Last Name"
-                    name="lastName"
-                    autoComplete="family-name"
+                    id="prezimeRegister"
+                    label="Prezime"
+                    name="prezimeRegister"
+                    onChange={(e) => setPrezimeRegister(e.target.value)}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    required
+                    fullWidth
+                    id="usernameRegister"
+                    label="Korisničko ime"
+                    name="usernameRegister"
+                    onChange={(e) => setUsernameRegister(e.target.value)}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    required
+                    fullWidth
+                    id="lokacijaRegister"
+                    label="Lokacija"
+                    name="lokacijaRegister"
+                    onChange={(e) => setLokacijaRegister(e.target.value)}
                   />
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
                     required
                     fullWidth
-                    id="username"
-                    label="Username"
-                    name="username"
-                    autoComplete="username"
+                    id="emailRegister"
+                    label="Email adresa"
+                    name="emailRegister"
+                    onChange={(e) => setEmailRegister(e.target.value)}
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={6}>
                   <TextField
                     required
                     fullWidth
-                    id="email"
-                    label="Email Address"
-                    name="email"
-                    autoComplete="email"
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    fullWidth
-                    name="password"
-                    label="Password"
+                    name="passwordRegister"
+                    label="Lozinka"
                     type="password"
-                    id="password"
-                    autoComplete="new-password"
+                    id="passwordRegister"
+                    onChange={(e) => setPasswordRegister(e.target.value)}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    required
+                    fullWidth
+                    name="rePasswordRegister"
+                    label="Potvrdi lozinku"
+                    type="password"
+                    id="rePasswordRegister"
+                    onChange={(e) => setRePasswordRegister(e.target.value)}
                   />
                 </Grid>
               </Grid>
@@ -114,12 +163,12 @@ export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >
-                Register
+                Registriraj
               </Button>
               <Grid container justifyContent="flex-end">
                 <Grid item>
                   <Link href="/" variant="body2">
-                    Already have an account? Login.
+                    Imate korisnički račun? Logirajte se.
                   </Link>
                 </Grid>
               </Grid>

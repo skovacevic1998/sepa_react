@@ -1,7 +1,12 @@
 import * as React from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { Login, Register, HomeRoutes, Item, ErrorPage } from "./components";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Login, Register, HomeRoutes, Item } from "./components";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
 interface ColorModeContextType {
   toggleColorMode: () => void;
@@ -85,7 +90,7 @@ function App() {
                 />
               }
             />
-            <Route path="/*" element={<ErrorPage Item={Item} />} />
+            <Route path="/*" element={<Navigate to={"/"} />} />
           </Routes>
         </Router>
       </ThemeProvider>

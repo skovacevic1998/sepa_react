@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Grid } from "@mui/material";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import Finance1 from "../../assets/finance1.jpg";
 import {
   ErrorPage,
@@ -138,36 +138,70 @@ export const HomeRoutes: React.FC<HomeRouterProps> = ({
               <Route
                 path="/"
                 element={
-                  <Homepage
-                    Item={Item}
-                    getBackgroundColor={getBackgroundColor}
-                  />
+                  userData ? (
+                    <Homepage
+                      Item={Item}
+                      getBackgroundColor={getBackgroundColor}
+                    />
+                  ) : (
+                    <Navigate to={"/"} />
+                  )
                 }
               />
               <Route
                 path="/konsignacija"
-                element={<Konsignacija Item={Item} />}
+                element={
+                  userData ? (
+                    <Konsignacija Item={Item} />
+                  ) : (
+                    <Navigate to={"/"} />
+                  )
+                }
               />
-              <Route path="/pregled" element={<PregledNaloga Item={Item} />} />
-              <Route path="/unos" element={<UnosNaloga Item={Item} />} />
+              <Route
+                path="/pregled"
+                element={
+                  userData ? (
+                    <PregledNaloga Item={Item} />
+                  ) : (
+                    <Navigate to={"/"} />
+                  )
+                }
+              />
+              <Route
+                path="/unos"
+                element={
+                  userData ? <UnosNaloga Item={Item} /> : <Navigate to={"/"} />
+                }
+              />
               <Route
                 path="/ucitavanje"
-                element={<UcitavanjeNaloga Item={Item} />}
+                element={
+                  userData ? (
+                    <UcitavanjeNaloga Item={Item} />
+                  ) : (
+                    <Navigate to={"/"} />
+                  )
+                }
               />
               <Route
                 path="/profil"
                 element={
-                  <Profil
-                    ime={userData?.ime}
-                    prezime={userData?.prezime}
-                    email={userData?.email}
-                    dob={userData?.dob}
-                    lokacija={userData?.lokacija}
-                    roles={userData?.roles}
-                    username={userData?.username}
-                    onUpdate={handleUpdateProfile}
-                    Item={Item}
-                  />
+                  userData ? (
+                    <Profil
+                      ime={userData?.ime}
+                      prezime={userData?.prezime}
+                      email={userData?.email}
+                      dob={userData?.dob}
+                      lokacija={userData?.lokacija}
+                      roles={userData?.roles}
+                      username={userData?.username}
+                      onUpdate={handleUpdateProfile}
+                      Item={Item}
+                    />
+                  ) : (
+                    <Navigate to={"/"} />
+                  )
                 }
               />
               <Route path="/*" element={<ErrorPage Item={Item} />} />
