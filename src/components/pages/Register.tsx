@@ -13,7 +13,8 @@ import { Item } from "../utilities/default/Item";
 import { Footer } from "../utilities/default/Footer";
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import Alert from "@mui/material/Alert";
+import Snackbar from "@mui/material/Snackbar";
 
 interface RegisterProps {
   getBackgroundColor: any;
@@ -27,11 +28,22 @@ export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
   const [emailRegister, setEmailRegister] = useState("");
   const [passwordRegister, setPasswordRegister] = useState("");
   const [rePasswordRegister, setRePasswordRegister] = useState("");
-
-  const navigate = useNavigate();
+  
+  const [emailError, setEmailError] = useState("");
+  const handleEmailFocus = () => {
+    setEmailError("");
+  };
+  const [successAlertOpen, setSuccessAlertOpen] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (!isValidEmail(emailRegister)) {
+      setEmailError("Neispravan format email-a");
+      return;
+    } else {
+      setEmailError("");
+    }
 
     try {
       const response = await axios.post("http://localhost:8080/api/register", {
@@ -45,13 +57,37 @@ export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
       });
 
       if (response.data && response.status === 200) {
-        navigate("/");
+        clearInputFields();
+
+        setSuccessAlertOpen(true);
       } else {
+        setEmailError("Uneseni email postoji");
         throw new Error("Register failed");
       }
     } catch (error) {
+      setEmailError("Uneseni email postoji, pokušajte ponovno!");
       console.error("Register error:", error);
     }
+  };
+
+  const isValidEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const clearInputFields = () => {
+    setImeRegister("");
+    setPrezimeRegister("");
+    setUsernameRegister("");
+    setLokacijaRegister("");
+    setEmailRegister("");
+    setPasswordRegister("");
+    setRePasswordRegister("");
+  };
+
+  const handleSuccessAlertClose = () => {
+    setSuccessAlertOpen(false);
+    clearInputFields();
   };
 
   return (
@@ -91,6 +127,7 @@ export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
                     id="imeRegister"
                     label="Ime"
                     autoFocus
+                    value={imeRegister}
                     onChange={(e) => setImeRegister(e.target.value)}
                   />
                 </Grid>
@@ -101,6 +138,7 @@ export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
                     id="prezimeRegister"
                     label="Prezime"
                     name="prezimeRegister"
+                    value={prezimeRegister}
                     onChange={(e) => setPrezimeRegister(e.target.value)}
                   />
                 </Grid>
@@ -111,6 +149,7 @@ export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
                     id="usernameRegister"
                     label="Korisničko ime"
                     name="usernameRegister"
+                    value={usernameRegister}
                     onChange={(e) => setUsernameRegister(e.target.value)}
                   />
                 </Grid>
@@ -121,6 +160,7 @@ export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
                     id="lokacijaRegister"
                     label="Lokacija"
                     name="lokacijaRegister"
+                    value={lokacijaRegister}
                     onChange={(e) => setLokacijaRegister(e.target.value)}
                   />
                 </Grid>
@@ -131,7 +171,11 @@ export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
                     id="emailRegister"
                     label="Email adresa"
                     name="emailRegister"
+                    value={emailRegister}
                     onChange={(e) => setEmailRegister(e.target.value)}
+                    error={!!emailError}
+                    helperText={emailError}
+                    onFocus={handleEmailFocus}
                   />
                 </Grid>
                 <Grid item xs={6}>
@@ -142,6 +186,7 @@ export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
                     label="Lozinka"
                     type="password"
                     id="passwordRegister"
+                    value={passwordRegister}
                     onChange={(e) => setPasswordRegister(e.target.value)}
                   />
                 </Grid>
@@ -153,6 +198,7 @@ export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
                     label="Potvrdi lozinku"
                     type="password"
                     id="rePasswordRegister"
+                    value={rePasswordRegister}
                     onChange={(e) => setRePasswordRegister(e.target.value)}
                   />
                 </Grid>
@@ -172,11 +218,26 @@ export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
                   </Link>
                 </Grid>
               </Grid>
+              
             </Box>
           </Box>
         </Item>
         <Footer getBackgroundColor={getBackgroundColor} />
       </Container>
+      <Snackbar
+                open={successAlertOpen}
+                autoHideDuration={5000}
+                onClose={handleSuccessAlertClose}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                >
+                <Alert
+                  onClose={handleSuccessAlertClose}
+                  severity="success"
+                  sx={{ width: "100%" }}
+                >
+                  Uspješno registriran korisnik!
+                </Alert>
+              </Snackbar>
     </Grid>
   );
 };

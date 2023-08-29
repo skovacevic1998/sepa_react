@@ -12,6 +12,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateUser } from "../../redux/userSlice";
 import { RootState } from "../../redux/store";
 import axios from "axios";
+import Alert from "@mui/material/Alert";
+import Snackbar from "@mui/material/Snackbar";
 
 interface ProfilProps {
   ime: string | undefined;
@@ -44,7 +46,6 @@ export const Profil: React.FC<ProfilProps> = ({
   lokacija,
   roles,
   username,
-  onUpdate,
   Item,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -57,6 +58,9 @@ export const Profil: React.FC<ProfilProps> = ({
     roles,
     username,
   });
+
+  const [successAlertOpen, setSuccessAlertOpen] = useState(false);
+  const [errorAlertOpen, setErrorAlertOpen] = useState(false);
 
   const dispatch = useDispatch();
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
@@ -77,7 +81,7 @@ export const Profil: React.FC<ProfilProps> = ({
       try {
         dispatch(updateUser(updatedUserData));
 
-        const response = await axios.put(
+        await axios.put(
           "http://localhost:8080/api/updateUser",
           {
             email,
@@ -85,11 +89,11 @@ export const Profil: React.FC<ProfilProps> = ({
           }
         );
 
-        console.log("User profile updated successfully:", response.data);
-
         setIsEditing(false);
+        setSuccessAlertOpen(true);
       } catch (error) {
         console.error("Error updating user profile:", error);
+        setErrorAlertOpen(true);
       }
     }
   };
@@ -221,7 +225,7 @@ export const Profil: React.FC<ProfilProps> = ({
                       required
                       fullWidth
                       id="korisnickaDob"
-                      label="Godina rođenja"
+                      label="Dob"
                       name="korisnickaDob"
                       type="number"
                       value={updatedData.dob || ""}
@@ -284,6 +288,36 @@ export const Profil: React.FC<ProfilProps> = ({
                   </Button>
                 )}
               </Box>
+
+              <Snackbar
+                open={successAlertOpen}
+                autoHideDuration={5000}
+                onClose={() => setSuccessAlertOpen(false)}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              >
+                <Alert
+                  onClose={() => setSuccessAlertOpen(false)}
+                  severity="success"
+                  sx={{ width: "100%" }}
+                >
+                  Uspješno ažuriran korisnik!
+                </Alert>
+              </Snackbar>
+
+              <Snackbar
+                open={errorAlertOpen}
+                autoHideDuration={5000}
+                onClose={() => setErrorAlertOpen(false)}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              >
+                <Alert
+                  onClose={() => setErrorAlertOpen(false)}
+                  severity="error"
+                  sx={{ width: "100%" }}
+                >
+                  Došlo je do pogreške.
+                </Alert>
+              </Snackbar>
             </Box>
           </Item>
         </Grid>
