@@ -14,9 +14,10 @@ import { ThemeProvider } from "@mui/material/styles";
 import Logo from "./../../assets/vub_logo.png";
 import { Item } from "../utilities/default/Item";
 import { Footer } from "../utilities/default/Footer";
+import { isEmailValid } from "../utilities/regex/Validation";
 
 interface LoginProps {
-  getBackgroundColor: any;
+  getBackgroundColor: () => string;
   theme: any;
 }
 
@@ -46,6 +47,13 @@ export const Login: React.FC<LoginProps> = ({ getBackgroundColor, theme }) => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (!isEmailValid(email)) {
+      setLoginFailed(true);
+      return;
+    } else {
+      setLoginFailed(false);
+    }
 
     try {
       const response = await axios.post("http://localhost:8080/api/login", {

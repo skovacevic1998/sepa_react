@@ -15,6 +15,7 @@ import { useState } from "react";
 import axios from "axios";
 import Alert from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
+import { isEmailValid } from "../utilities/regex/Validation";
 
 interface RegisterProps {
   getBackgroundColor: any;
@@ -28,7 +29,7 @@ export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
   const [emailRegister, setEmailRegister] = useState("");
   const [passwordRegister, setPasswordRegister] = useState("");
   const [rePasswordRegister, setRePasswordRegister] = useState("");
-  
+
   const [emailError, setEmailError] = useState("");
   const handleEmailFocus = () => {
     setEmailError("");
@@ -38,7 +39,7 @@ export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!isValidEmail(emailRegister)) {
+    if (!isEmailValid(emailRegister)) {
       setEmailError("Neispravan format email-a");
       return;
     } else {
@@ -68,11 +69,6 @@ export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
       setEmailError("Uneseni email postoji, pokušajte ponovno!");
       console.error("Register error:", error);
     }
-  };
-
-  const isValidEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
   };
 
   const clearInputFields = () => {
@@ -128,7 +124,9 @@ export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
                     label="Ime"
                     autoFocus
                     value={imeRegister}
-                    onChange={(e) => setImeRegister(e.target.value)}
+                    onChange={(e: {
+                      target: { value: React.SetStateAction<string> };
+                    }) => setImeRegister(e.target.value)}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -139,7 +137,9 @@ export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
                     label="Prezime"
                     name="prezimeRegister"
                     value={prezimeRegister}
-                    onChange={(e) => setPrezimeRegister(e.target.value)}
+                    onChange={(e: {
+                      target: { value: React.SetStateAction<string> };
+                    }) => setPrezimeRegister(e.target.value)}
                   />
                 </Grid>
                 <Grid item xs={6}>
@@ -150,7 +150,9 @@ export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
                     label="Korisničko ime"
                     name="usernameRegister"
                     value={usernameRegister}
-                    onChange={(e) => setUsernameRegister(e.target.value)}
+                    onChange={(e: {
+                      target: { value: React.SetStateAction<string> };
+                    }) => setUsernameRegister(e.target.value)}
                   />
                 </Grid>
                 <Grid item xs={6}>
@@ -161,7 +163,9 @@ export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
                     label="Lokacija"
                     name="lokacijaRegister"
                     value={lokacijaRegister}
-                    onChange={(e) => setLokacijaRegister(e.target.value)}
+                    onChange={(e: {
+                      target: { value: React.SetStateAction<string> };
+                    }) => setLokacijaRegister(e.target.value)}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -172,7 +176,9 @@ export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
                     label="Email adresa"
                     name="emailRegister"
                     value={emailRegister}
-                    onChange={(e) => setEmailRegister(e.target.value)}
+                    onChange={(e: {
+                      target: { value: React.SetStateAction<string> };
+                    }) => setEmailRegister(e.target.value)}
                     error={!!emailError}
                     helperText={emailError}
                     onFocus={handleEmailFocus}
@@ -187,7 +193,9 @@ export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
                     type="password"
                     id="passwordRegister"
                     value={passwordRegister}
-                    onChange={(e) => setPasswordRegister(e.target.value)}
+                    onChange={(e: {
+                      target: { value: React.SetStateAction<string> };
+                    }) => setPasswordRegister(e.target.value)}
                   />
                 </Grid>
                 <Grid item xs={6}>
@@ -199,7 +207,9 @@ export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
                     type="password"
                     id="rePasswordRegister"
                     value={rePasswordRegister}
-                    onChange={(e) => setRePasswordRegister(e.target.value)}
+                    onChange={(e: {
+                      target: { value: React.SetStateAction<string> };
+                    }) => setRePasswordRegister(e.target.value)}
                   />
                 </Grid>
               </Grid>
@@ -218,26 +228,25 @@ export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
                   </Link>
                 </Grid>
               </Grid>
-              
             </Box>
           </Box>
         </Item>
         <Footer getBackgroundColor={getBackgroundColor} />
       </Container>
       <Snackbar
-                open={successAlertOpen}
-                autoHideDuration={5000}
-                onClose={handleSuccessAlertClose}
-                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                >
-                <Alert
-                  onClose={handleSuccessAlertClose}
-                  severity="success"
-                  sx={{ width: "100%" }}
-                >
-                  Uspješno registriran korisnik!
-                </Alert>
-              </Snackbar>
+        open={successAlertOpen}
+        autoHideDuration={5000}
+        onClose={handleSuccessAlertClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleSuccessAlertClose}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
+          Uspješno registriran korisnik!
+        </Alert>
+      </Snackbar>
     </Grid>
   );
 };

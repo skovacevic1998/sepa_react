@@ -19,3 +19,5 @@ export { UcitavanjeNaloga } from "./pages/UcitavanjeNaloga";
 export { UploadFileComponent } from "./utilities/ucitavanje/UploadFileComponent";
 export { Loader } from "./utilities/default/Loader";
 export { KonsigBtnSet } from "./utilities/konsignacija/KonsigBtnSet";
+export { isEmailValid } from "./utilities/regex/Validation";
+export { isUsernameValid } from "./utilities/regex/Validation";
