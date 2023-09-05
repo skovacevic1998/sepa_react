@@ -21,3 +21,6 @@ export { Loader } from "./utilities/default/Loader";
 export { KonsigBtnSet } from "./utilities/konsignacija/KonsigBtnSet";
 export { isEmailValid } from "./utilities/regex/Validation";
 export { isUsernameValid } from "./utilities/regex/Validation";
+export { FirstSection } from "./utilities/unos/FirstSection";
+export { SecondSection } from "./utilities/unos/SecondSection";
+export { ThirdSection } from "./utilities/unos/ThirdSection";

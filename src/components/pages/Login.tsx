@@ -31,6 +31,7 @@ interface User {
   prezime: string;
   roles: string;
   username: string;
+  br_blagajne: number;
 }
 
 export const Login: React.FC<LoginProps> = ({ getBackgroundColor, theme }) => {
@@ -63,8 +64,14 @@ export const Login: React.FC<LoginProps> = ({ getBackgroundColor, theme }) => {
 
       if (response.data && response.status === 200) {
         const userData: User = response.data;
-        dispatch(setUser(userData));
-        navigate("/home");
+
+        if (isDataSerializable(userData)) {
+          dispatch(setUser(userData));
+          console.log(userData);
+          navigate("/home");
+        } else {
+          console.error("Received non-serializable data:", userData);
+        }
       } else {
         dispatch(clearUser());
         setLoginFailed(true);
@@ -76,6 +83,15 @@ export const Login: React.FC<LoginProps> = ({ getBackgroundColor, theme }) => {
       setLoginFailed(true);
       navigate("/");
       console.error("Login error:", error);
+    }
+  };
+
+  const isDataSerializable = (data: any) => {
+    try {
+      JSON.stringify(data);
+      return true;
+    } catch (e) {
+      return false;
     }
   };
 

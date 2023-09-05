@@ -9,6 +9,7 @@ interface User {
   lokacija: string;
   roles: string;
   username: string;
+  brBlagajne: number;
 }
 
 interface UserState {

@@ -1,15 +1,17 @@
-export const isEmailValid = (email: string) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
+export const isEmailValid = (value: string) => {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(value);
 };
 
-export const isUsernameValid = (username: string) => {
-  const usernameRegex = /^[a-zA-Z0-9_-]{4,16}$/;
-  return usernameRegex.test(username);
+export const isUsernameValid = (value: string) => {
+  const regex = /^[a-zA-Z0-9_-]{4,16}$/;
+  return regex.test(value);
 };
 
-export const isPasswordValid = (password: string) => {
-  const passwordRegex =
+export const isPasswordValid = (value: string) => {
+  const regex =
     /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
-  return passwordRegex.test(password);
+  return regex.test(value);
 };
+
+export const kontrolniBrojRegex = /^\d{2}$/;
