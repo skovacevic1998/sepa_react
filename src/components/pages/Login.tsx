@@ -67,7 +67,6 @@ export const Login: React.FC<LoginProps> = ({ getBackgroundColor, theme }) => {
 
         if (isDataSerializable(userData)) {
           dispatch(setUser(userData));
-          console.log(userData);
           navigate("/home");
         } else {
           console.error("Received non-serializable data:", userData);

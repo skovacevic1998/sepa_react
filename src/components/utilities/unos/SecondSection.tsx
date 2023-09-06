@@ -21,7 +21,6 @@ export const SecondSection: React.FC<SecondSectionProps> = ({
   formik,
 }) => {
   const [sifNamjeneOptions, setSifNamjeneOptions] = useState<any[]>([]);
-  const [selectedSifNamjene, setSelectedSifNamjene] = useState("");
   const [openSifNamjeneDropdown, setOpenSifNamjeneDropdown] = useState(false);
 
   const [sifOpisPlacanjaOptions, setSifOpisPlacanjaOptions] = useState<
@@ -32,7 +31,6 @@ export const SecondSection: React.FC<SecondSectionProps> = ({
     }[]
   >([]);
 
-  const [selectedSifOpisPlacanja, setSelectedSifOpisPlacanja] = useState("");
   const [openSifOpisPlacanjaDropdown, setOpenSifOpisPlacanjaDropdown] =
     useState(false);
 
@@ -49,8 +47,6 @@ export const SecondSection: React.FC<SecondSectionProps> = ({
         }));
 
         setSifNamjeneOptions(optionsNamjene);
-
-        setSelectedSifNamjene(formik.initialValues.sifNamjene);
       } catch (error) {
         console.error("Error fetching sifNamjene options:", error);
       }
@@ -68,8 +64,6 @@ export const SecondSection: React.FC<SecondSectionProps> = ({
         );
 
         setSifOpisPlacanjaOptions(optionsOpisPlacanja);
-
-        setSelectedSifOpisPlacanja(formik.initialValues.sifOpisPlac);
       } catch (error) {
         console.error("Error fetching sifOpisPlacanja options:", error);
       }
@@ -222,9 +216,8 @@ export const SecondSection: React.FC<SecondSectionProps> = ({
                   open={openSifOpisPlacanjaDropdown}
                   onOpen={() => setOpenSifOpisPlacanjaDropdown(true)}
                   onClose={() => setOpenSifOpisPlacanjaDropdown(false)}
-                  value={selectedSifOpisPlacanja}
+                  value={formik.values.sifOpisPlac}
                   onChange={(e) => {
-                    setSelectedSifOpisPlacanja(e.target.value);
                     formik.setFieldValue("sifOpisPlac", e.target.value);
 
                     const selectedOption = sifOpisPlacanjaOptions.find(
@@ -272,9 +265,8 @@ export const SecondSection: React.FC<SecondSectionProps> = ({
                   open={openSifNamjeneDropdown}
                   onOpen={() => setOpenSifNamjeneDropdown(true)}
                   onClose={() => setOpenSifNamjeneDropdown(false)}
-                  value={selectedSifNamjene}
+                  value={formik.values.sifNamjene}
                   onChange={(e) => {
-                    setSelectedSifNamjene(e.target.value);
                     formik.setFieldValue("sifNamjene", e.target.value);
                   }}
                   onBlur={formik.handleBlur}

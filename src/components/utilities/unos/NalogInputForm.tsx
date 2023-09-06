@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Typography, Button } from "@mui/material";
+import { Grid, Typography, Button, TextField } from "@mui/material";
 import { KonsigTable } from "../konsignacija/KonsigTable";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -267,12 +267,13 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
         );
 
         if (response.data && response.data !== "") {
-          console.log("Nalog saved successfully!");
-          const grupaNalogaData: GrupaNaloga = {
-            ...response.data,
-            date: new Date(response.data.date).toISOString().split("T")[0],
-          };
-          dispatch(setGrupaNaloga(grupaNalogaData));
+          if (currentGrupa === null) {
+            const grupaNalogaData: GrupaNaloga = {
+              ...response.data,
+              date: new Date(response.data.date).toISOString().split("T")[0],
+            };
+            dispatch(setGrupaNaloga(grupaNalogaData));
+          }
 
           resetFormToInitialValues();
         } else {

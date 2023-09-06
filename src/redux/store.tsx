@@ -21,6 +21,17 @@ const store = configureStore({
     unosNaloga: persistedReducerUnos,
     grupaNaloga: persistedReducerGrupa,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        // Ignore all redux-persist actions
+        ignoredActions: [
+          "persist/PERSIST",
+          "persist/REHYDRATE",
+          "persist/PURGE",
+        ],
+      },
+    }),
 });
 
 export const persistor = persistStore(store);
