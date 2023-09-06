@@ -10,6 +10,8 @@ import { kontrolniBrojRegex } from "../regex/Validation";
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import { RootState } from "../../../redux/store";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { setGrupaNaloga } from "../../../redux/grupaSlice";
 
 interface NalogInputProps {
   Item: any;
@@ -42,6 +44,13 @@ interface FormValues {
   iznosNaknade: number;
 }
 
+interface GrupaNaloga {
+  id: number;
+  id_user: number;
+  sts_grupe: string;
+  date: string;
+}
+
 export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
   const [isCheckedUplata, setCheckedUplata] = useState(true);
   const [isCheckedIsplata, setCheckedIsplata] = useState(false);
@@ -49,17 +58,18 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
   const [isUplata, setUplata] = useState(true);
   const [isIsplata, setIsplata] = useState(false);
 
+  const dispatch = useDispatch();
+
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
+  const currentGrupa = useSelector(
+    (state: RootState) => state.grupaNaloga.currentGrupaNaloga
+  );
   const currentUnosNaloga = useSelector(
     (state: RootState) => state.unosNaloga.currentUnosNaloga
   );
 
   const resetFormToInitialValues = () => {
     formik.resetForm();
-  };
-
-  const testFormikValues = () => {
-    console.log(formik.values);
   };
 
   const handleCheckboxChange = async (event: any) => {
@@ -80,8 +90,6 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
       const drzavaRac = formik.values.drzavaRac;
       const kontrolniBrojRac = "23";
       const ibanRac = "24020061100525045";
-
-      console.log(drzavaRac + kontrolniBrojRac + ibanRac);
 
       try {
         const response = await axios.post(
@@ -118,8 +126,6 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
       const drzavaRac = formik.values.drzavaRac;
       const kontrolniBrojRac = "23";
       const ibanRac = "24020061100525045";
-
-      console.log(drzavaRac + kontrolniBrojRac + ibanRac);
 
       try {
         const response = await axios.post(
@@ -243,14 +249,32 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
-        // Replace the URL with your API endpoint
+        const userId = currentUser?.id;
+        const nalogDto = values;
+        const uplata = isUplata;
+        const isplata = isIsplata;
+        const grupaNaloga = currentGrupa;
+
         const response = await axios.post(
           "http://localhost:8080/api/insertNalog",
-          values
+          {
+            nalogDto,
+            userId,
+            uplata,
+            isplata,
+            grupaNaloga,
+          }
         );
 
-        if (response.status === 200) {
+        if (response.data && response.data !== "") {
           console.log("Nalog saved successfully!");
+          const grupaNalogaData: GrupaNaloga = {
+            ...response.data,
+            date: new Date(response.data.date).toISOString().split("T")[0],
+          };
+          dispatch(setGrupaNaloga(grupaNalogaData));
+
+          resetFormToInitialValues();
         } else {
           console.error("Error saving nalog:", response.data);
         }
@@ -315,7 +339,6 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
                   <Button
                     style={{ backgroundColor: "#e99516" }}
                     variant="contained"
-                    onClick={testFormikValues}
                   >
                     Pokušaj ponovno
                   </Button>

@@ -31,8 +31,6 @@ export const ThirdSection: React.FC<ThirdSectionProps> = ({
         }
       );
 
-      console.log(response.data);
-
       if (response.data && response.data !== "") {
         const ime = response.data.ime;
         const adresa = response.data.adresa;
@@ -96,8 +94,6 @@ export const ThirdSection: React.FC<ThirdSectionProps> = ({
         if (naknadaResponse.data && naknadaResponse.data !== "") {
           const vrstaNaknade = naknadaResponse.data.vrstaNaknade;
           const iznosNaknade = naknadaResponse.data.iznosNaknade;
-
-          console.log(vrstaNaknade + "   " + iznosNaknade);
 
           formik.setFieldValue("vrNaknade", vrstaNaknade);
           formik.setFieldValue("iznosNaknade", iznosNaknade);
@@ -354,6 +350,7 @@ export const ThirdSection: React.FC<ThirdSectionProps> = ({
               InputLabelProps={{ shrink: true }}
               fullWidth
               required
+              disabled={formik.values.sifOpisPlac !== 0}
               value={formik.values.opisPlac}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
