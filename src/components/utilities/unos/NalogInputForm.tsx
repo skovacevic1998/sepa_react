@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Typography, Button, TextField } from "@mui/material";
+import { Grid, Typography, Button } from "@mui/material";
 import { KonsigTable } from "../konsignacija/KonsigTable";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -63,9 +63,6 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const currentGrupa = useSelector(
     (state: RootState) => state.grupaNaloga.currentGrupaNaloga
-  );
-  const currentUnosNaloga = useSelector(
-    (state: RootState) => state.unosNaloga.currentUnosNaloga
   );
 
   const resetFormToInitialValues = () => {

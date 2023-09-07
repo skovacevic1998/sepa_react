@@ -81,13 +81,10 @@ export const Profil: React.FC<ProfilProps> = ({
       try {
         dispatch(updateUser(updatedUserData));
 
-        await axios.put(
-          "http://localhost:8080/api/updateUser",
-          {
-            email,
-            updatedUserData,
-          }
-        );
+        await axios.put("http://localhost:8080/api/updateUser", {
+          email,
+          updatedUserData,
+        });
 
         setIsEditing(false);
         setSuccessAlertOpen(true);
@@ -178,7 +175,7 @@ export const Profil: React.FC<ProfilProps> = ({
                       label="Korisničko ime"
                       autoFocus
                       value={updatedData.ime || ""}
-                      onChange={(e) =>
+                      onChange={(e: { target: { value: any } }) =>
                         setUpdatedData({ ...updatedData, ime: e.target.value })
                       }
                       disabled={!isEditing}
@@ -193,7 +190,7 @@ export const Profil: React.FC<ProfilProps> = ({
                       name="prezime"
                       autoComplete="Prezime"
                       value={updatedData.prezime || ""}
-                      onChange={(e) =>
+                      onChange={(e: { target: { value: any } }) =>
                         setUpdatedData({
                           ...updatedData,
                           prezime: e.target.value,
@@ -211,7 +208,7 @@ export const Profil: React.FC<ProfilProps> = ({
                       name="email"
                       autoComplete="email"
                       value={updatedData.email || ""}
-                      onChange={(e) =>
+                      onChange={(e: { target: { value: any } }) =>
                         setUpdatedData({
                           ...updatedData,
                           email: e.target.value,
@@ -229,7 +226,7 @@ export const Profil: React.FC<ProfilProps> = ({
                       name="korisnickaDob"
                       type="number"
                       value={updatedData.dob || ""}
-                      onChange={(e) =>
+                      onChange={(e: { target: { value: string } }) =>
                         setUpdatedData({
                           ...updatedData,
                           dob: parseInt(e.target.value),
@@ -247,7 +244,7 @@ export const Profil: React.FC<ProfilProps> = ({
                       name="lokacija"
                       autoComplete="lokacija"
                       value={updatedData.lokacija || ""}
-                      onChange={(e) =>
+                      onChange={(e: { target: { value: any } }) =>
                         setUpdatedData({
                           ...updatedData,
                           lokacija: e.target.value,
