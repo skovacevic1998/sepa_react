@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Typography, Button } from "@mui/material";
+import { Grid, Typography, Button, Snackbar, Alert } from "@mui/material";
 import { KonsigTable } from "../konsignacija/KonsigTable";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -57,6 +57,11 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
 
   const [isUplata, setUplata] = useState(true);
   const [isIsplata, setIsplata] = useState(false);
+
+  const [successAlertOpen, setSuccessAlertOpen] = useState(false);
+  const handleSuccessAlertClose = () => {
+    setSuccessAlertOpen(false);
+  };
 
   const dispatch = useDispatch();
 
@@ -272,6 +277,7 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
             dispatch(setGrupaNaloga(grupaNalogaData));
           }
 
+          setSuccessAlertOpen(true);
           resetFormToInitialValues();
         } else {
           console.error("Error saving nalog:", response.data);
@@ -347,6 +353,20 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
                   </Button>
                 </Grid>
               </Grid>
+              <Snackbar
+                open={successAlertOpen}
+                autoHideDuration={5000}
+                onClose={handleSuccessAlertClose}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              >
+                <Alert
+                  onClose={handleSuccessAlertClose}
+                  severity="success"
+                  sx={{ width: "100%" }}
+                >
+                  Uspješno spremljen nalog
+                </Alert>
+              </Snackbar>
             </Item>
           </Grid>
         </Grid>

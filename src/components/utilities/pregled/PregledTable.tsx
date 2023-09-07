@@ -22,7 +22,6 @@ const initialRows: any[] | (() => any[]) = [];
 
 function createData(
   idGrNal: number,
-  iznos: number,
   tip: string,
   datum: string,
   stsGrupe: string,
@@ -30,7 +29,6 @@ function createData(
 ) {
   return {
     idGrNal,
-    iznos,
     tip,
     datum,
     stsGrupe,
@@ -57,7 +55,6 @@ function Row(props: { row: ReturnType<typeof createData> }) {
         <TableCell component="th" scope="row">
           {row.idGrNal}
         </TableCell>
-        <TableCell align="left">{row.iznos}</TableCell>
         <TableCell align="left">{row.tip}</TableCell>
         <TableCell align="left">{row.datum}</TableCell>
         <TableCell align="left">{row.stsGrupe}</TableCell>
@@ -73,19 +70,29 @@ function Row(props: { row: ReturnType<typeof createData> }) {
                 <TableHead>
                   <TableRow>
                     <TableCell>Račun primatelja</TableCell>
+                    <TableCell>Informacije primatelja</TableCell>
                     <TableCell>Račun platitelja</TableCell>
+                    <TableCell>Informacije platitelja</TableCell>
+                    <TableCell>Šifra opisa plaćanja</TableCell>
                     <TableCell>Opis plaćanja</TableCell>
+                    <TableCell>Šifra namjene</TableCell>
                     <TableCell>Iznos naloga</TableCell>
+                    <TableCell>Iznos naknade</TableCell>
                     <TableCell>Status naloga</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {row.grNal.map((grNalRow) => (
-                    <TableRow key={grNalRow.racPlat}>
+                    <TableRow key={grNalRow.idGrNal}>
                       <TableCell>{grNalRow.racPrim}</TableCell>
+                      <TableCell>{grNalRow.infoRacPrim}</TableCell>
                       <TableCell>{grNalRow.racPlat}</TableCell>
+                      <TableCell>{grNalRow.infoRacPlat}</TableCell>
+                      <TableCell>{grNalRow.sifOpisPlac}</TableCell>
                       <TableCell>{grNalRow.opisPlac}</TableCell>
+                      <TableCell>{grNalRow.sifNamjene}</TableCell>
                       <TableCell>{grNalRow.iznosNal}</TableCell>
+                      <TableCell>{grNalRow.iznosNaknade}</TableCell>
                       <TableCell>{grNalRow.stsNaloga}</TableCell>
                     </TableRow>
                   ))}
@@ -101,6 +108,8 @@ function Row(props: { row: ReturnType<typeof createData> }) {
 
 export function PregledTable() {
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
+  const [usernameValue, setUsernameValue] = useState("");
+  const [error, setError] = useState(false);
 
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().substr(0, 10)
@@ -114,16 +123,35 @@ export function PregledTable() {
 
   const handleSearchClick = async () => {
     try {
-      const username = currentUser?.username;
+      const usernameInput = document.getElementById(
+        "username"
+      ) as HTMLInputElement;
+      let username = usernameInput.value;
+
+      if (username === "") {
+        username = currentUser?.username || "";
+      }
 
       const response = await axios.post(
-        "http://localhost:8080/api/getNalogByUsername",
+        "http://localhost:8080/api/getPregledNalogaList",
         {
           username,
         }
       );
 
-      setRows(response.data);
+      if (response.data && response.data !== "") {
+        const filteredRows = response.data.filter(
+          (row: any) => row.datum === selectedDate
+        );
+
+        console.log(rows);
+
+        setRows(filteredRows);
+        setError(false);
+      } else {
+        setRows([]);
+        setError(true);
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -135,13 +163,17 @@ export function PregledTable() {
         const username = currentUser?.username;
 
         const response = await axios.post(
-          "http://localhost:8080/api/getNalogByUsername",
+          "http://localhost:8080/api/getPregledNalogaList",
           {
             username,
           }
         );
 
-        setRows(response.data);
+        const filteredRows = response.data.filter(
+          (row: any) => row.datum === selectedDate
+        );
+
+        setRows(filteredRows);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -179,10 +211,10 @@ export function PregledTable() {
             fullWidth
             label="Korisničko ime"
             autoFocus
+            error={error}
             disabled={currentUser?.roles !== "Admin"}
-            value={
-              currentUser?.roles === "Admin" ? "" : currentUser?.username || ""
-            }
+            value={usernameValue}
+            onChange={(e) => setUsernameValue(e.target.value)}
           />
         </Grid>
         <Grid item>
@@ -201,7 +233,6 @@ export function PregledTable() {
                 <TableRow>
                   <TableCell />
                   <TableCell>ID GRUPE NALOGA</TableCell>
-                  <TableCell align="left">IZNOS GRUPE NALOGA</TableCell>
                   <TableCell align="left">TIP</TableCell>
                   <TableCell align="left">DATUM IZVRŠENJA</TableCell>
                   <TableCell align="left">STATUS</TableCell>
