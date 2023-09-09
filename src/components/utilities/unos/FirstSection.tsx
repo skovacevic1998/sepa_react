@@ -3,6 +3,8 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import FormGroup from "@mui/material/FormGroup";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
+import { useSelector } from "react-redux/es/hooks/useSelector";
+import { RootState } from "../../../redux/store";
 
 interface FirstSectionProps {
   Item: any;
@@ -19,6 +21,10 @@ export const FirstSection: React.FC<FirstSectionProps> = ({
   isCheckedIsplata,
   formik,
 }) => {
+  const currentGrupa = useSelector(
+    (state: RootState) => state.grupaNaloga.currentGrupaNaloga
+  );
+
   return (
     <>
       <Grid item xs={12} md={6} lg={4}>
@@ -31,6 +37,7 @@ export const FirstSection: React.FC<FirstSectionProps> = ({
                     <Checkbox
                       checked={isCheckedUplata}
                       onChange={handleCheckboxChange}
+                      disabled={currentGrupa !== null}
                     />
                   }
                   name="checkboxUplata"
@@ -46,6 +53,7 @@ export const FirstSection: React.FC<FirstSectionProps> = ({
                     <Checkbox
                       checked={isCheckedIsplata}
                       onChange={handleCheckboxChange}
+                      disabled={currentGrupa !== null}
                     />
                   }
                   name="checkboxIsplata"

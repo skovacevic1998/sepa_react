@@ -9,7 +9,7 @@ import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import PersonIcon from "@mui/icons-material/Person";
 import { useDispatch, useSelector } from "react-redux";
-import { updateUser } from "../../redux/userSlice";
+import { updateUser } from "../../redux/slice";
 import { RootState } from "../../redux/store";
 import axios from "axios";
 import Alert from "@mui/material/Alert";

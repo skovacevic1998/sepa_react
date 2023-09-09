@@ -16,7 +16,7 @@ import { IconButtonProps } from "@mui/material/IconButton";
 import Logo from "./../../../assets/vub_logo.png";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
-import { clearUser } from "../../../redux/userSlice";
+import { clearUser } from "../../../redux/slice";
 
 const pages = [
   { label: "Početna stranica", path: "/home" },

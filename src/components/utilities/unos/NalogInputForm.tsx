@@ -11,13 +11,16 @@ import { useSelector } from "react-redux/es/hooks/useSelector";
 import { RootState } from "../../../redux/store";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { setGrupaNaloga } from "../../../redux/grupaSlice";
+import { setGrupaNaloga } from "../../../redux/slice";
+import { v4 as uuidv4 } from "uuid";
+import { addUnosNaloga } from "../../../redux/slice";
 
 interface NalogInputProps {
   Item: any;
 }
 
 interface FormValues {
+  id: string;
   iznos: number;
   imePlat: string;
   adresaPlat: string;
@@ -25,7 +28,7 @@ interface FormValues {
   imePrim: string;
   adresaPrim: string;
   mjestoPrim: string;
-  sifOpisPlac: string;
+  sifOpisPlac: number;
   sifNamjene: string;
   datIzvrsenja: string | null;
   datPodnosenja: string | null;
@@ -44,23 +47,33 @@ interface FormValues {
   iznosNaknade: number;
 }
 
-interface GrupaNaloga {
-  id: number;
-  id_user: number;
-  sts_grupe: string;
+interface UnosNalogaForInputForm {
+  id: string;
+  brRac: string;
+  iznUpl: number;
+  iznIspl: number;
   date: string;
+  pnb: string;
+  naknada: number;
+  sifOpisPlac: number;
+  sifNamjene: string;
+  status: string;
 }
 
 export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
   const [isCheckedUplata, setCheckedUplata] = useState(true);
   const [isCheckedIsplata, setCheckedIsplata] = useState(false);
 
-  const [isUplata, setUplata] = useState(true);
+  const [isUplata, setUplata] = useState(false);
   const [isIsplata, setIsplata] = useState(false);
 
   const [successAlertOpen, setSuccessAlertOpen] = useState(false);
+  const [errorAlertOpenGrupaNaloga, setErrorAlertOpenGrupaNaloga] =
+    useState(false);
+
   const handleSuccessAlertClose = () => {
     setSuccessAlertOpen(false);
+    setErrorAlertOpenGrupaNaloga(false);
   };
 
   const dispatch = useDispatch();
@@ -68,6 +81,9 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const currentGrupa = useSelector(
     (state: RootState) => state.grupaNaloga.currentGrupaNaloga
+  );
+  const currentNalogList = useSelector(
+    (state: RootState) => state.unosNaloga.unosNalogaList
   );
 
   const resetFormToInitialValues = () => {
@@ -84,7 +100,18 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
       setCheckedIsplata(false);
       setUplata(true);
       setIsplata(false);
+      localStorage.setItem("tipGrupeNaloga", "checkboxUplata");
+    } else if (name === "checkboxIsplata") {
+      setCheckedUplata(false);
+      setCheckedIsplata(true);
+      setUplata(false);
+      setIsplata(true);
+      localStorage.setItem("tipGrupeNaloga", "checkboxIsplata");
+    }
 
+    const storedTipGrupeNaloga = localStorage.getItem("tipGrupeNaloga");
+
+    if (storedTipGrupeNaloga === "checkboxUplata") {
       formik.setFieldValue("ibanPrim", "24020061100525045");
       formik.setFieldValue("kontrolniBrojPrim", "23");
       formik.setFieldValue("modelPrim", "99");
@@ -115,12 +142,7 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
       } catch (error) {
         console.error("Error fetching iban_prim:", error);
       }
-    } else if (name === "checkboxIsplata") {
-      setCheckedIsplata(true);
-      setCheckedUplata(false);
-      setUplata(false);
-      setIsplata(true);
-
+    } else if (storedTipGrupeNaloga === "checkboxIsplata") {
       formik.setFieldValue("ibanPlat", "24020061100525045");
       formik.setFieldValue("kontrolniBrojPlat", "23");
       formik.setFieldValue("modelPlat", "99");
@@ -221,8 +243,34 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
   const currentDate = new Date();
   const formattedCurrentDate = currentDate.toISOString().split("T")[0];
 
+  const mapFormValuesToUnosNaloga = (
+    formValues: FormValues,
+    statusGrupe: string
+  ): UnosNalogaForInputForm => {
+    return {
+      id: uuidv4(),
+      brRac:
+        isUplata === true
+          ? formValues.drzavaRac +
+            formValues.kontrolniBrojPrim +
+            formValues.ibanPrim
+          : formValues.drzavaRac +
+            formValues.kontrolniBrojPlat +
+            formValues.ibanPlat,
+      iznUpl: isUplata === true ? formValues.iznos : 0,
+      iznIspl: isUplata === false ? formValues.iznos : 0,
+      date: formValues.datIzvrsenja || "",
+      pnb: isUplata === true ? formValues.pnbPlat : formValues.pnbPrim,
+      naknada: formValues.iznosNaknade,
+      sifOpisPlac: formValues.sifOpisPlac,
+      sifNamjene: formValues.sifNamjene,
+      status: statusGrupe,
+    };
+  };
+
   const formik = useFormik<FormValues>({
     initialValues: {
+      id: uuidv4(),
       iznos: 0,
       imePlat: "",
       adresaPlat: "",
@@ -230,7 +278,7 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
       imePrim: "",
       adresaPrim: "",
       mjestoPrim: "",
-      sifOpisPlac: "",
+      sifOpisPlac: 0,
       sifNamjene: "",
       datIzvrsenja: formattedCurrentDate,
       datPodnosenja: formattedCurrentDate,
@@ -257,6 +305,11 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
         const isplata = isIsplata;
         const grupaNaloga = currentGrupa;
 
+        if (grupaNaloga?.sts_grupe === "Izvršen") {
+          setErrorAlertOpenGrupaNaloga(true);
+          return;
+        }
+
         const response = await axios.post(
           "http://localhost:8080/api/insertNalog",
           {
@@ -268,17 +321,96 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
           }
         );
 
+        console.log(response.data);
+
         if (response.data && response.data !== "") {
-          if (currentGrupa === null) {
-            const grupaNalogaData: GrupaNaloga = {
-              ...response.data,
-              date: new Date(response.data.date).toISOString().split("T")[0],
-            };
-            dispatch(setGrupaNaloga(grupaNalogaData));
-          }
+          dispatch(setGrupaNaloga(response.data));
+
+          const nalogDtoMap = mapFormValuesToUnosNaloga(
+            values,
+            response.data.sts_grupe
+          );
+
+          dispatch(addUnosNaloga(nalogDtoMap));
 
           setSuccessAlertOpen(true);
+
+          const storedTipGrupeNaloga = localStorage.getItem("tipGrupeNaloga");
+
           resetFormToInitialValues();
+          if (storedTipGrupeNaloga === "checkboxUplata") {
+            setCheckedUplata(true);
+            setCheckedIsplata(false);
+            setUplata(true);
+            setIsplata(false);
+
+            formik.setFieldValue("ibanPrim", "24020061100525045");
+            formik.setFieldValue("kontrolniBrojPrim", "23");
+            formik.setFieldValue("modelPrim", "99");
+
+            const drzavaRac = formik.values.drzavaRac;
+            const kontrolniBrojRac = "23";
+            const ibanRac = "24020061100525045";
+
+            try {
+              const response = await axios.post(
+                "http://localhost:8080/api/getRacunInfo",
+                {
+                  drzavaRac,
+                  kontrolniBrojRac,
+                  ibanRac,
+                }
+              );
+
+              if (response.data && response.data !== "") {
+                const ime = response.data.ime;
+                const adresa = response.data.adresa;
+                const mjesto = response.data.mjesto;
+
+                formik.setFieldValue("imePrim", ime);
+                formik.setFieldValue("adresaPrim", adresa);
+                formik.setFieldValue("mjestoPrim", mjesto);
+              }
+            } catch (error) {
+              console.error("Error fetching iban_prim:", error);
+            }
+          } else if (storedTipGrupeNaloga === "checkboxIsplata") {
+            setCheckedIsplata(true);
+            setCheckedUplata(false);
+            setUplata(false);
+            setIsplata(true);
+
+            formik.setFieldValue("ibanPlat", "24020061100525045");
+            formik.setFieldValue("kontrolniBrojPlat", "23");
+            formik.setFieldValue("modelPlat", "99");
+
+            const drzavaRac = formik.values.drzavaRac;
+            const kontrolniBrojRac = "23";
+            const ibanRac = "24020061100525045";
+
+            try {
+              const response = await axios.post(
+                "http://localhost:8080/api/getRacunInfo",
+                {
+                  drzavaRac,
+                  kontrolniBrojRac,
+                  ibanRac,
+                }
+              );
+
+              if (response.data && response.data !== "") {
+                const ime = response.data.ime;
+                const adresa = response.data.adresa;
+                const mjesto = response.data.mjesto;
+
+                formik.setFieldValue("imePlat", ime);
+                formik.setFieldValue("adresaPlat", adresa);
+                formik.setFieldValue("mjestoPlat", mjesto);
+              }
+            } catch (error) {
+              console.error("Error fetching iban_prim:", error);
+            }
+          }
         } else {
           console.error("Error saving nalog:", response.data);
         }
@@ -289,7 +421,15 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
   });
 
   useEffect(() => {
-    handleCheckboxChange({ target: { name: "checkboxUplata" } });
+    const storedTipGrupeNaloga = localStorage.getItem("tipGrupeNaloga");
+    let tipGrupeNaloga = "";
+    if (storedTipGrupeNaloga === null || storedTipGrupeNaloga === "") {
+      tipGrupeNaloga = "checkboxUplata";
+    } else {
+      tipGrupeNaloga = storedTipGrupeNaloga;
+    }
+
+    handleCheckboxChange({ target: { name: tipGrupeNaloga } });
   }, []);
 
   return (
@@ -329,7 +469,7 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
                 </Typography>
               </Grid>
               <Grid item justifyContent="center">
-                <KonsigTable />
+                <KonsigTable nalogList={currentNalogList} />
               </Grid>
             </Item>
           </Grid>
@@ -343,6 +483,7 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
                   <Button
                     style={{ backgroundColor: "#e99516" }}
                     variant="contained"
+                    onClick={resetFormToInitialValues}
                   >
                     Pokušaj ponovno
                   </Button>
@@ -365,6 +506,20 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
                   sx={{ width: "100%" }}
                 >
                   Uspješno spremljen nalog
+                </Alert>
+              </Snackbar>
+              <Snackbar
+                open={errorAlertOpenGrupaNaloga}
+                autoHideDuration={5000}
+                onClose={handleSuccessAlertClose}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              >
+                <Alert
+                  onClose={handleSuccessAlertClose}
+                  severity="error"
+                  sx={{ width: "100%" }}
+                >
+                  Grupa naloga je izvršena, zatvori konsignaciju
                 </Alert>
               </Snackbar>
             </Item>

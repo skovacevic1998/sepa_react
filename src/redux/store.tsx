@@ -1,9 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import userReducer from "./userSlice";
-import unosReducer from "./unoSlice";
-import grupaNalogaReducer from "./grupaSlice";
+import userReducer from "./slice";
+import unosReducer from "./slice";
+import grupaNalogaReducer from "./slice";
 
 const persistConfig = {
   key: "root",
@@ -24,7 +24,6 @@ const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        // Ignore all redux-persist actions
         ignoredActions: [
           "persist/PERSIST",
           "persist/REHYDRATE",

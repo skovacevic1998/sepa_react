@@ -19,7 +19,7 @@ import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../redux/store";
-import { setUser } from "../../redux/userSlice";
+import { setUser } from "../../redux/slice";
 
 interface ColorModeContextType {
   toggleColorMode: () => void;
@@ -57,7 +57,6 @@ export const HomeRoutes: React.FC<HomeRouterProps> = ({
   const location = useLocation();
   const [loading, setLoading] = useState(true);
 
-  // Use useDispatch to get the dispatch function from Redux
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -69,7 +68,6 @@ export const HomeRoutes: React.FC<HomeRouterProps> = ({
     return () => clearTimeout(timeoutId);
   }, [location]);
 
-  // Get the user data from the Redux store
   const userData = useSelector((state: RootState) => state.user.currentUser);
 
   const handleUpdateProfile = (data: Partial<User>) => {

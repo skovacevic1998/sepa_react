@@ -1,5 +1,20 @@
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { v4 as uuidv4 } from "uuid";
+
+interface KonsigTableProps {
+  nalogList: UnosNaloga[];
+}
+interface UnosNaloga {
+  id: string;
+  brRac: string;
+  iznUpl: number;
+  iznIspl: number;
+  date: string;
+  pnb: string;
+  naknada: number;
+  sifOpisPlac: number;
+  sifNamjene: string;
+  status: string;
+}
 
 const columns: GridColDef[] = [
   { field: "rbr", headerName: "Rbr", type: "number", width: 70 },
@@ -49,118 +64,11 @@ const columns: GridColDef[] = [
   },
 ];
 
-const rows = [
-  {
-    id: uuidv4(),
-    rbr: 1,
-    brRac: "HR8023400095688623153",
-    iznUpl: 1000.01,
-    iznIspl: 0,
-    date: "2023-08-14",
-    pnb: "23400095688623153",
-    naknada: 0.5,
-    sifOpisPlac: 2,
-    sifNamjene: "DCDC",
-    status: "Aktivan",
-  },
-  {
-    id: uuidv4(),
-    rbr: 2,
-    brRac: "HR8023400095688623153",
-    iznUpl: 1000.01,
-    iznIspl: 0,
-    date: "2023-08-14",
-    pnb: "23400095688623153",
-    naknada: 0.5,
-    sifOpisPlac: 2,
-    sifNamjene: "DCDC",
-    status: "Aktivan",
-  },
-  {
-    id: uuidv4(),
-    rbr: 3,
-    brRac: "HR8023400095688623153",
-    iznUpl: 1000.01,
-    iznIspl: 0,
-    date: "2023-08-14",
-    pnb: "23400095688623153",
-    naknada: 0.5,
-    sifOpisPlac: 2,
-    sifNamjene: "DCDC",
-    status: "Aktivan",
-  },
-  {
-    id: uuidv4(),
-    rbr: 4,
-    brRac: "HR8023400095688623153",
-    iznUpl: 1000.01,
-    iznIspl: 0,
-    date: "2023-08-14",
-    pnb: "23400095688623153",
-    naknada: 0.5,
-    sifOpisPlac: 2,
-    sifNamjene: "DCDC",
-    status: "Aktivan",
-  },
-  {
-    id: uuidv4(),
-    rbr: 5,
-    brRac: "HR8023400095688623153",
-    iznUpl: 1000.01,
-    iznIspl: 0,
-    date: "2023-08-14",
-    pnb: "23400095688623153",
-    naknada: 0.5,
-    sifOpisPlac: 2,
-    sifNamjene: "DCDC",
-    status: "Aktivan",
-  },
-  {
-    id: uuidv4(),
-    rbr: 6,
-    brRac: "HR8023400095688623153",
-    iznUpl: 1000.01,
-    iznIspl: 0,
-    date: "2023-08-14",
-    pnb: "23400095688623153",
-    naknada: 0.5,
-    sifOpisPlac: 2,
-    sifNamjene: "DCDC",
-    status: "Deaktiviran",
-  },
-  {
-    id: uuidv4(),
-    rbr: 7,
-    brRac: "HR8023400095688623153",
-    iznUpl: 1000.01,
-    iznIspl: 0,
-    date: "2023-08-14",
-    pnb: "23400095688623153",
-    naknada: 0.5,
-    sifOpisPlac: 2,
-    sifNamjene: "DCDC",
-    status: "Odbijen",
-  },
-  {
-    id: uuidv4(),
-    rbr: 8,
-    brRac: "HR8023400095688623153",
-    iznUpl: 1000.01,
-    iznIspl: 0,
-    date: "2023-08-14",
-    pnb: "23400095688623153",
-    naknada: 0.5,
-    sifOpisPlac: 2,
-    sifNamjene: "DCDC",
-    status: "Aktivan",
-  },
-];
-
-export const KonsigTable = ({ enableCheckboxSelection = false }) => {
+export const KonsigTable: React.FC<KonsigTableProps> = ({ nalogList }) => {
   return (
     <div>
       <DataGrid
-        rows={rows}
+        rows={nalogList}
         columns={columns}
         initialState={{
           pagination: {
@@ -168,7 +76,10 @@ export const KonsigTable = ({ enableCheckboxSelection = false }) => {
           },
         }}
         pageSizeOptions={[5, 10]}
-        checkboxSelection={enableCheckboxSelection}
+        checkboxSelection={false}
+        disableColumnSelector
+        disableDensitySelector
+        disableRowSelectionOnClick
       />
     </div>
   );

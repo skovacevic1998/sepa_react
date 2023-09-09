@@ -1,31 +1,36 @@
 import React, { useState } from "react";
-import {
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-  Grid,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Grid, Typography } from "@mui/material";
 import { UcitaniNaloziTbl } from "../utilities/ucitavanje/UcitaniNaloziTbl";
-import { UcitavanjeNalogaBtnSet } from "../utilities/ucitavanje/UcitavanjeNalogaBtnSet";
 import { KonsigTable } from "../utilities/konsignacija/KonsigTable";
+import { useSelector } from "react-redux/es/hooks/useSelector";
+import { RootState } from "../../redux/store";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 interface UcitavanjeNalogaProps {
   Item: any;
 }
 
 export const UcitavanjeNaloga: React.FC<UcitavanjeNalogaProps> = ({ Item }) => {
-  const [isCheckedUplata, setCheckedUplata] = useState(true);
-  const [isCheckedIsplata, setCheckedIsplata] = useState(false);
+  const currentNalogList = useSelector(
+    (state: RootState) => state.unosNaloga.unosNalogaList
+  );
 
-  const handleCheckboxChange = (event: any) => {
-    const { name, checked } = event.target;
-    if (name === "checkboxUplata") {
-      setCheckedUplata(checked);
-      setCheckedIsplata(false);
-    } else if (name === "checkboxIsplata") {
-      setCheckedIsplata(checked);
-      setCheckedUplata(false);
+  const handleFileUpload = (file: File) => {
+    console.log("Uploading file:", file);
+  };
+
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setSelectedFile(event.target.files[0]);
+    }
+  };
+
+  const handleUploadClick = () => {
+    if (selectedFile) {
+      handleFileUpload(selectedFile);
+      setSelectedFile(null);
     }
   };
 
@@ -46,41 +51,6 @@ export const UcitavanjeNaloga: React.FC<UcitavanjeNalogaProps> = ({ Item }) => {
         <Grid item xs={12} sx={{ marginTop: -5, marginBottom: -5 }}>
           <Item>
             <Grid container justifyContent={"center"}>
-              <Grid item xs={12} md={6} lg={4} sx={{ margin: -5, padding: 0 }}>
-                <Item>
-                  <Grid container justifyContent="space-evenly">
-                    <Grid item>
-                      <FormGroup>
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              checked={isCheckedUplata}
-                              onChange={handleCheckboxChange}
-                            />
-                          }
-                          name="checkboxUplata"
-                          label="Datotečna uplata"
-                        />
-                      </FormGroup>
-                    </Grid>
-
-                    <Grid item>
-                      <FormGroup>
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              checked={isCheckedIsplata}
-                              onChange={handleCheckboxChange}
-                            />
-                          }
-                          name="checkboxIsplata"
-                          label="Datotečna isplata"
-                        />
-                      </FormGroup>
-                    </Grid>
-                  </Grid>
-                </Item>
-              </Grid>
               <Grid item xs={10}>
                 <Item>
                   <Typography
@@ -103,14 +73,64 @@ export const UcitavanjeNaloga: React.FC<UcitavanjeNalogaProps> = ({ Item }) => {
                   >
                     Konsignacija
                   </Typography>
-                  <KonsigTable />
+                  <KonsigTable nalogList={currentNalogList} />
                 </Item>
               </Grid>
             </Grid>
           </Item>
         </Grid>
         <Grid item xs={12}>
-          <UcitavanjeNalogaBtnSet Item={Item} />
+          <Grid container justifyContent="right">
+            <Grid item xs={12} md={8} lg={4} justifyContent="center">
+              <Item>
+                <Grid container justifyContent="space-evenly" spacing={2}>
+                  <Grid item>
+                    <Button variant="contained" color="error">
+                      Isprazni tablicu
+                    </Button>
+                  </Grid>
+                  <Grid item>
+                    <Box>
+                      <input
+                        type="file"
+                        accept=".pdf,.doc,.docx,.txt"
+                        onChange={handleFileChange}
+                        style={{ display: "none" }}
+                        id="fileInput"
+                      />
+                      <label htmlFor="fileInput">
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          component="span"
+                          startIcon={<CloudUploadIcon />}
+                        >
+                          Učitaj datoteku
+                        </Button>
+                      </label>
+                      {selectedFile && (
+                        <Box mt={2}>
+                          <Typography variant="body1">
+                            Odabrana datoteka: {selectedFile.name}
+                          </Typography>
+                          <Button
+                            variant="outlined"
+                            color="primary"
+                            onClick={handleUploadClick}
+                          >
+                            Učitaj
+                          </Button>
+                        </Box>
+                      )}
+                    </Box>
+                  </Grid>
+                  <Grid item>
+                    <Button variant="contained">Spremi naloge</Button>
+                  </Grid>
+                </Grid>
+              </Item>
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
     </>
