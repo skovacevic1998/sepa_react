@@ -5,32 +5,48 @@ import { KonsigTable } from "../utilities/konsignacija/KonsigTable";
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import { RootState } from "../../redux/store";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import axios from "axios";
 
 interface UcitavanjeNalogaProps {
   Item: any;
 }
 
 export const UcitavanjeNaloga: React.FC<UcitavanjeNalogaProps> = ({ Item }) => {
+  const [file, setFile] = useState<File | null>(null);
+
   const currentNalogList = useSelector(
     (state: RootState) => state.unosNaloga.unosNalogaList
   );
 
-  const handleFileUpload = (file: File) => {
-    console.log("Uploading file:", file);
-  };
+  const handleUcitavanjeNaloga = () => {
+    console.log("tu sam");
+    if (file) {
+      // Create a FormData object to handle file uploads
+      const formData = new FormData();
+      formData.append("file", file);
 
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+      console.log(formData);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      setSelectedFile(event.target.files[0]);
+      axios
+        .post("http://localhost:8080/api/sepaValidation", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((response) => {
+          console.log("File uploaded successfully:", response.data);
+        })
+        .catch((error) => {
+          console.error("Error uploading file:", error);
+        });
     }
   };
 
-  const handleUploadClick = () => {
-    if (selectedFile) {
-      handleFileUpload(selectedFile);
-      setSelectedFile(null);
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setFile(event.target.files[0]);
+      console.log(event.target.value);
+      handleUcitavanjeNaloga();
     }
   };
 
@@ -93,7 +109,7 @@ export const UcitavanjeNaloga: React.FC<UcitavanjeNalogaProps> = ({ Item }) => {
                     <Box>
                       <input
                         type="file"
-                        accept=".pdf,.doc,.docx,.txt"
+                        accept=".xml"
                         onChange={handleFileChange}
                         style={{ display: "none" }}
                         id="fileInput"
@@ -108,24 +124,15 @@ export const UcitavanjeNaloga: React.FC<UcitavanjeNalogaProps> = ({ Item }) => {
                           Učitaj datoteku
                         </Button>
                       </label>
-                      {selectedFile && (
-                        <Box mt={2}>
-                          <Typography variant="body1">
-                            Odabrana datoteka: {selectedFile.name}
-                          </Typography>
-                          <Button
-                            variant="outlined"
-                            color="primary"
-                            onClick={handleUploadClick}
-                          >
-                            Učitaj
-                          </Button>
-                        </Box>
-                      )}
                     </Box>
                   </Grid>
                   <Grid item>
-                    <Button variant="contained">Spremi naloge</Button>
+                    <Button
+                      variant="contained"
+                      onClick={handleUcitavanjeNaloga}
+                    >
+                      Spremi naloge
+                    </Button>
                   </Grid>
                 </Grid>
               </Item>
