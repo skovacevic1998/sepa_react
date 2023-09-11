@@ -13,6 +13,7 @@ interface UcitavanjeNalogaProps {
 
 export const UcitavanjeNaloga: React.FC<UcitavanjeNalogaProps> = ({ Item }) => {
   const [file, setFile] = useState<File | null>(null);
+  const currentUser = useSelector((state: RootState) => state.user.currentUser);
 
   const currentNalogList = useSelector(
     (state: RootState) => state.unosNaloga.unosNalogaList
@@ -21,18 +22,27 @@ export const UcitavanjeNaloga: React.FC<UcitavanjeNalogaProps> = ({ Item }) => {
   const handleUcitavanjeNaloga = () => {
     console.log("tu sam");
     if (file) {
-      // Create a FormData object to handle file uploads
       const formData = new FormData();
       formData.append("file", file);
 
       console.log(formData);
 
+      const userId = currentUser?.id;
+      const brBlagajne = currentUser?.brBlagajne;
+
       axios
-        .post("http://localhost:8080/api/sepaValidation", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
+        .post(
+          "http://localhost:8080/api/sepaValidation?userId=" +
+            userId +
+            "&brBlagajne=" +
+            brBlagajne,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        )
         .then((response) => {
           console.log("File uploaded successfully:", response.data);
         })
