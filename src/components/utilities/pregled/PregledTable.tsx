@@ -227,7 +227,10 @@ export function PregledTable() {
           </Button>
         </Grid>
         <Grid item xs={12} marginTop={2}>
-          <TableContainer component={Paper}>
+          <TableContainer
+            component={Paper}
+            style={{ maxHeight: "400px", overflowY: "auto" }}
+          >
             <Table aria-label="collapsible table">
               <TableHead>
                 <TableRow>

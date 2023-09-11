@@ -73,6 +73,9 @@ const slice = createSlice({
         return item;
       });
     },
+    replaceUnosNalogaList: (state, action: PayloadAction<UnosNaloga[]>) => {
+      state.unosNalogaList = action.payload;
+    },
 
     setUser: (state, action: PayloadAction<Partial<User>>) => {
       state.currentUser = {
@@ -118,6 +121,7 @@ export const {
   clearGrupaNaloga,
   updateGrupaNaloga,
   updateUnosNalogaList,
+  replaceUnosNalogaList,
 } = slice.actions;
 
 export default slice.reducer;

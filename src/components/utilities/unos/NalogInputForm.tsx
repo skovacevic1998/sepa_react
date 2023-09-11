@@ -321,8 +321,6 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
           }
         );
 
-        console.log(response.data);
-
         if (response.data && response.data !== "") {
           dispatch(setGrupaNaloga(response.data));
 
@@ -423,7 +421,11 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
   useEffect(() => {
     const storedTipGrupeNaloga = localStorage.getItem("tipGrupeNaloga");
     let tipGrupeNaloga = "";
-    if (storedTipGrupeNaloga === null || storedTipGrupeNaloga === "") {
+    if (
+      storedTipGrupeNaloga === null ||
+      storedTipGrupeNaloga === "" ||
+      storedTipGrupeNaloga === "Datoteka"
+    ) {
       tipGrupeNaloga = "checkboxUplata";
     } else {
       tipGrupeNaloga = storedTipGrupeNaloga;

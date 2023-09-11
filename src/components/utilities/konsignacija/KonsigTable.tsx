@@ -1,8 +1,18 @@
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import React, { useState, useEffect } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from "@mui/material";
 
 interface KonsigTableProps {
   nalogList: UnosNaloga[];
 }
+
 interface UnosNaloga {
   id: string;
   brRac: string;
@@ -16,71 +26,52 @@ interface UnosNaloga {
   status: string;
 }
 
-const columns: GridColDef[] = [
-  { field: "rbr", headerName: "Rbr", type: "number", width: 70 },
-  { field: "brRac", headerName: "Broj računa", type: "string", width: 130 },
-  { field: "iznUpl", headerName: "Iznos uplate", type: "number", width: 130 },
-  {
-    field: "iznIspl",
-    headerName: "Iznos isplate",
-    type: "number",
-    width: 90,
-  },
-  {
-    field: "date",
-    headerName: "Datum izvršenja",
-    type: "string",
-    width: 160,
-  },
-  {
-    field: "pnb",
-    headerName: "Poziv na broj",
-    type: "string",
-    width: 160,
-  },
-  {
-    field: "naknada",
-    headerName: "Naknada",
-    type: "string",
-    width: 160,
-  },
-  {
-    field: "sifOpisPlac",
-    headerName: "Šifra opisa plaćanja",
-    type: "number",
-    width: 160,
-  },
-  {
-    field: "sifNamjene",
-    headerName: "Šifra namjene",
-    type: "string",
-    width: 160,
-  },
-  {
-    field: "status",
-    headerName: "Status",
-    type: "string",
-    width: 160,
-  },
+const columns = [
+  { id: "rbr", label: "Rbr", minWidth: 70 },
+  { id: "brRac", label: "Broj računa", minWidth: 130 },
+  { id: "iznUpl", label: "Iznos uplate", minWidth: 130 },
+  { id: "iznIspl", label: "Iznos isplate", minWidth: 90 },
+  { id: "date", label: "Datum izvršenja", minWidth: 160 },
+  { id: "pnb", label: "Poziv na broj", minWidth: 160 },
+  { id: "naknada", label: "Naknada", minWidth: 160 },
+  { id: "sifOpisPlac", label: "Šifra opisa plaćanja", minWidth: 160 },
+  { id: "sifNamjene", label: "Šifra namjene", minWidth: 160 },
+  { id: "status", label: "Status", minWidth: 160 },
 ];
 
 export const KonsigTable: React.FC<KonsigTableProps> = ({ nalogList }) => {
+  const tableContainerStyle: React.CSSProperties = {
+    minHeight: "400px", // Set the minimum height here
+  };
+
   return (
-    <div>
-      <DataGrid
-        rows={nalogList}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: { page: 0, pageSize: 5 },
-          },
-        }}
-        pageSizeOptions={[5, 10]}
-        checkboxSelection={false}
-        disableColumnSelector
-        disableDensitySelector
-        disableRowSelectionOnClick
-      />
-    </div>
+    <TableContainer component={Paper} style={tableContainerStyle}>
+      <Table stickyHeader aria-label="konsig table">
+        <TableHead>
+          <TableRow>
+            {columns.map((column) => (
+              <TableCell
+                key={column.id}
+                align="left"
+                style={{ minWidth: column.minWidth }}
+              >
+                {column.label}
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {nalogList.map((row) => (
+            <TableRow key={row.id}>
+              {columns.map((column) => (
+                <TableCell key={column.id} align="left">
+                  {(row as any)[column.id]}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 };

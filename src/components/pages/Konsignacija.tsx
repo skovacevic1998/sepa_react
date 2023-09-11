@@ -1,17 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Alert, Button, Grid, Snackbar, Typography } from "@mui/material";
 import { KonsigTable } from "../utilities/konsignacija/KonsigTable";
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import { RootState } from "../../redux/store";
 import { useDispatch } from "react-redux";
-import { updateGrupaNaloga, updateUnosNalogaList } from "../../redux/slice";
+import {
+  addUnosNaloga,
+  updateGrupaNaloga,
+  updateUnosNalogaList,
+} from "../../redux/slice";
 import { clearGrupaNaloga } from "../../redux/slice";
 import { clearUnosNalogaList } from "../../redux/slice";
 import axios from "axios";
+import { replaceUnosNalogaList } from "../../redux/slice";
 
 interface ThemeProp {
   Item: any;
 }
+
+interface UnosNaloga {
+  id: string;
+  brRac: string;
+  iznUpl: number;
+  iznIspl: number;
+  date: string;
+  pnb: string;
+  naknada: number;
+  sifOpisPlac: number;
+  sifNamjene: string;
+  status: string;
+}
+
 export const Konsignacija: React.FC<ThemeProp> = ({ Item }) => {
   const [successAlertOpen, setSuccessAlertOpen] = useState(false);
   const [successAlertOpenEnd, setSuccessAlertOpenEnd] = useState(false);
@@ -34,18 +53,58 @@ export const Konsignacija: React.FC<ThemeProp> = ({ Item }) => {
     (state: RootState) => state.unosNaloga.unosNalogaList
   );
 
+  const currentUser = useSelector((state: RootState) => state.user.currentUser);
+
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    fetchNalogList();
+  }, []);
+
+  const fetchNalogList = async () => {
+    const storedTipGrupeNaloga = localStorage.getItem("tipGrupeNaloga");
+    const userId = currentUser?.id;
+    const idGrupeNaloga = currentGrupa?.id;
+
+    if (storedTipGrupeNaloga === "Datoteka") {
+      try {
+        const response = await axios.post(
+          "http://localhost:8080/api/getNalogList",
+          {
+            userId,
+            idGrupeNaloga,
+          }
+        );
+
+        console.log(currentNalogList);
+        if (response.data) {
+          dispatch(replaceUnosNalogaList(response.data));
+        }
+      } catch (error: any) {
+        // Handle Axios-specific error
+        if (error.response) {
+          console.error("Server responded with an error:", error.response.data);
+        } else if (error.request) {
+          console.error("No response received from the server.");
+        } else {
+          console.error("An error occurred:", error.message);
+        }
+      }
+    }
+  };
 
   const handleStatusChange = async () => {
     console.log(currentGrupa?.sts_grupe);
     if (currentGrupa?.sts_grupe === "Aktivan") {
-      const updatedUnosNalogaList = currentNalogList.map((item, index) => {
-        return {
-          ...item,
-          status: "Izvršen",
-          rbr: index + 1,
-        };
-      });
+      const updatedUnosNalogaList = (currentNalogList || []).map(
+        (item, index) => {
+          return {
+            ...item,
+            status: "Izvršen",
+            rbr: index + 1,
+          };
+        }
+      );
 
       dispatch(updateUnosNalogaList(updatedUnosNalogaList));
       dispatch(updateGrupaNaloga({ sts_grupe: "Izvršen" }));
@@ -77,6 +136,7 @@ export const Konsignacija: React.FC<ThemeProp> = ({ Item }) => {
       setSuccessAlertOpenEndError(true);
     }
   };
+
   return (
     <>
       <Grid container justifyContent={"center"}>
