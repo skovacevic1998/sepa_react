@@ -67,6 +67,8 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
   const [isUplata, setUplata] = useState(false);
   const [isIsplata, setIsplata] = useState(false);
 
+  const [isDatoteka, setDatoteka] = useState(false);
+
   const [successAlertOpen, setSuccessAlertOpen] = useState(false);
   const [errorAlertOpenGrupaNaloga, setErrorAlertOpenGrupaNaloga] =
     useState(false);
@@ -421,7 +423,10 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
   useEffect(() => {
     const storedTipGrupeNaloga = localStorage.getItem("tipGrupeNaloga");
     let tipGrupeNaloga = "";
-    if (
+
+    if (storedTipGrupeNaloga === "Datoteka") {
+      setDatoteka(true);
+    } else if (
       storedTipGrupeNaloga === null ||
       storedTipGrupeNaloga === "" ||
       storedTipGrupeNaloga === "Datoteka"
@@ -491,7 +496,11 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
                   </Button>
                 </Grid>
                 <Grid item>
-                  <Button variant="contained" type="submit">
+                  <Button
+                    variant="contained"
+                    type="submit"
+                    disabled={isDatoteka}
+                  >
                     Spremi nalog
                   </Button>
                 </Grid>

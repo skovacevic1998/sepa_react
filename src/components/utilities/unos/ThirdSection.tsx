@@ -158,7 +158,10 @@ export const ThirdSection: React.FC<ThirdSectionProps> = ({
                   disabled={isIsplata}
                   value={formik.values.ibanPlat}
                   onChange={formik.handleChange}
-                  onBlur={handleIbanPlatBlur}
+                  onBlur={(e) => {
+                    formik.handleBlur(e); // Trigger Formik's handleBlur
+                    handleIbanPlatBlur(); // Trigger your custom function
+                  }}
                   error={
                     formik.touched.ibanPlat && Boolean(formik.errors.ibanPlat)
                   }
@@ -282,7 +285,10 @@ export const ThirdSection: React.FC<ThirdSectionProps> = ({
                 disabled={isUplata}
                 value={formik.values.ibanPrim}
                 onChange={formik.handleChange}
-                onBlur={handleIbanPrimBlur}
+                onBlur={(e) => {
+                  formik.handleBlur(e); // Trigger Formik's handleBlur
+                  handleIbanPrimBlur(); // Trigger your custom function
+                }}
                 error={
                   formik.touched.ibanPrim && Boolean(formik.errors.ibanPrim)
                 }

@@ -45,7 +45,7 @@ export const Konsignacija: React.FC<ThemeProp> = ({ Item }) => {
     setSuccessAlertOpenError(false);
   };
 
-  const currentGrupa = useSelector(
+  const currentGrupaNaloga = useSelector(
     (state: RootState) => state.grupaNaloga.currentGrupaNaloga
   );
 
@@ -64,7 +64,7 @@ export const Konsignacija: React.FC<ThemeProp> = ({ Item }) => {
   const fetchNalogList = async () => {
     const storedTipGrupeNaloga = localStorage.getItem("tipGrupeNaloga");
     const userId = currentUser?.id;
-    const idGrupeNaloga = currentGrupa?.id;
+    const idGrupeNaloga = currentGrupaNaloga?.id;
 
     if (storedTipGrupeNaloga === "Datoteka") {
       try {
@@ -76,12 +76,10 @@ export const Konsignacija: React.FC<ThemeProp> = ({ Item }) => {
           }
         );
 
-        console.log(currentNalogList);
         if (response.data) {
           dispatch(replaceUnosNalogaList(response.data));
         }
       } catch (error: any) {
-        // Handle Axios-specific error
         if (error.response) {
           console.error("Server responded with an error:", error.response.data);
         } else if (error.request) {
@@ -94,8 +92,7 @@ export const Konsignacija: React.FC<ThemeProp> = ({ Item }) => {
   };
 
   const handleStatusChange = async () => {
-    console.log(currentGrupa?.sts_grupe);
-    if (currentGrupa?.sts_grupe === "Aktivan") {
+    if (currentGrupaNaloga?.sts_grupe === "Aktivan") {
       const updatedUnosNalogaList = (currentNalogList || []).map(
         (item, index) => {
           return {
@@ -109,12 +106,48 @@ export const Konsignacija: React.FC<ThemeProp> = ({ Item }) => {
       dispatch(updateUnosNalogaList(updatedUnosNalogaList));
       dispatch(updateGrupaNaloga({ sts_grupe: "Izvršen" }));
 
-      const idGrupeNaloga = currentGrupa.id;
+      const idGrupeNaloga = currentGrupaNaloga.id;
+      const statusGrupeNaloga = "Izvršen";
 
       const response = await axios.post(
         "http://localhost:8080/api/updateStatus",
         {
           idGrupeNaloga,
+          statusGrupeNaloga,
+        }
+      );
+
+      if (response.data && response.status === 200) {
+        setSuccessAlertOpen(true);
+      }
+    } else {
+      setSuccessAlertOpenError(true);
+    }
+  };
+
+  const handleDeaktivacijaNaloga = async () => {
+    if (currentGrupaNaloga?.sts_grupe === "Aktivan") {
+      const updatedUnosNalogaList = (currentNalogList || []).map(
+        (item, index) => {
+          return {
+            ...item,
+            status: "Deaktiviran",
+            rbr: index + 1,
+          };
+        }
+      );
+
+      dispatch(updateUnosNalogaList(updatedUnosNalogaList));
+      dispatch(updateGrupaNaloga({ sts_grupe: "Deaktiviran" }));
+
+      const idGrupeNaloga = currentGrupaNaloga.id;
+      const statusGrupeNaloga = "Deaktiviran";
+
+      const response = await axios.post(
+        "http://localhost:8080/api/updateStatus",
+        {
+          idGrupeNaloga,
+          statusGrupeNaloga,
         }
       );
 
@@ -127,7 +160,10 @@ export const Konsignacija: React.FC<ThemeProp> = ({ Item }) => {
   };
 
   const handleEndConsignation = () => {
-    if (currentGrupa?.sts_grupe === "Izvršen") {
+    if (
+      currentGrupaNaloga?.sts_grupe === "Izvršen" ||
+      currentGrupaNaloga?.sts_grupe === "Deaktiviran"
+    ) {
       dispatch(clearUnosNalogaList());
       dispatch(clearGrupaNaloga());
       setSuccessAlertOpenEnd(true);
@@ -162,8 +198,12 @@ export const Konsignacija: React.FC<ThemeProp> = ({ Item }) => {
               <Item>
                 <Grid container justifyContent="space-evenly" spacing={2}>
                   <Grid item>
-                    <Button variant="contained" color="error">
-                      Deaktiviraj
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={handleDeaktivacijaNaloga}
+                    >
+                      Deaktiviraj naloge
                     </Button>
                   </Grid>
                   <Grid item>
@@ -216,7 +256,7 @@ export const Konsignacija: React.FC<ThemeProp> = ({ Item }) => {
                     severity="error"
                     sx={{ width: "100%" }}
                   >
-                    Nema aktivnih naloga
+                    Desila se greška pri izvršenju akcije.
                   </Alert>
                 </Snackbar>
                 <Snackbar
@@ -230,7 +270,8 @@ export const Konsignacija: React.FC<ThemeProp> = ({ Item }) => {
                     severity="error"
                     sx={{ width: "100%" }}
                   >
-                    Nema aktivne konsignacije ili je status Astivan
+                    Nema aktivne konsignacije ili je "Aktivan" status grupe
+                    naloga.
                   </Alert>
                 </Snackbar>
               </Item>

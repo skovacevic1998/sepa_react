@@ -144,8 +144,6 @@ export function PregledTable() {
           (row: any) => row.datum === selectedDate
         );
 
-        console.log(rows);
-
         setRows(filteredRows);
         setError(false);
       } else {

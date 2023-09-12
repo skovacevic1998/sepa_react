@@ -41,8 +41,21 @@ const columns = [
 
 export const KonsigTable: React.FC<KonsigTableProps> = ({ nalogList }) => {
   const tableContainerStyle: React.CSSProperties = {
-    minHeight: "400px", // Set the minimum height here
+    minHeight: "400px",
   };
+
+  const [updatedUnosNalogaList, setUpdatedUnosNalogaList] = useState<
+    UnosNaloga[]
+  >([]);
+
+  useEffect(() => {
+    const updatedList = (nalogList || []).map((item, index) => ({
+      ...item,
+      rbr: index + 1,
+    }));
+
+    setUpdatedUnosNalogaList(updatedList);
+  }, [nalogList]);
 
   return (
     <TableContainer component={Paper} style={tableContainerStyle}>
@@ -61,7 +74,7 @@ export const KonsigTable: React.FC<KonsigTableProps> = ({ nalogList }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {nalogList.map((row) => (
+          {updatedUnosNalogaList.map((row) => (
             <TableRow key={row.id}>
               {columns.map((column) => (
                 <TableCell key={column.id} align="left">

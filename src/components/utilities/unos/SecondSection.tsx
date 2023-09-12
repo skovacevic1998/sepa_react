@@ -218,39 +218,43 @@ export const SecondSection: React.FC<SecondSectionProps> = ({
                   onClose={() => setOpenSifOpisPlacanjaDropdown(false)}
                   value={formik.values.sifOpisPlac}
                   onChange={(e) => {
-                    formik.setFieldValue("sifOpisPlac", e.target.value);
+                    const selectedValue = Number(e.target.value);
+                    formik.setFieldValue("sifOpisPlac", selectedValue);
 
-                    const selectedOption = sifOpisPlacanjaOptions.find(
-                      (option) =>
-                        option.sif_opis_plac === Number(e.target.value)
-                    );
-
-                    if (selectedOption && selectedOption.sif_opis_plac !== 0) {
-                      formik.setFieldValue("opisPlac", selectedOption.opis);
-                    } else {
+                    if (selectedValue === 0) {
                       formik.setFieldValue("opisPlac", "");
+                    } else {
+                      const selectedOption = sifOpisPlacanjaOptions.find(
+                        (option) => option.sif_opis_plac === selectedValue
+                      );
+
+                      if (selectedOption) {
+                        formik.setFieldValue("opisPlac", selectedOption.opis);
+                      } else {
+                        formik.setFieldValue("opisPlac", "");
+                      }
                     }
                   }}
                   onBlur={formik.handleBlur}
                 >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  {sifOpisPlacanjaOptions.map((option) => (
-                    <MenuItem
-                      key={option.sif_opis_plac}
-                      value={option.sif_opis_plac}
-                      style={{
-                        textAlign: openSifOpisPlacanjaDropdown
-                          ? "left"
-                          : "center",
-                      }}
-                    >
-                      {openSifOpisPlacanjaDropdown
-                        ? `${option.sif_opis_plac} - ${option.opis}`
-                        : option.sif_opis_plac}
-                    </MenuItem>
-                  ))}
+                  {sifOpisPlacanjaOptions
+                    .slice()
+                    .sort((a, b) => a.sif_opis_plac - b.sif_opis_plac)
+                    .map((option) => (
+                      <MenuItem
+                        key={option.sif_opis_plac}
+                        value={option.sif_opis_plac}
+                        style={{
+                          textAlign: openSifOpisPlacanjaDropdown
+                            ? "left"
+                            : "center",
+                        }}
+                      >
+                        {openSifOpisPlacanjaDropdown
+                          ? `${option.sif_opis_plac} - ${option.opis}`
+                          : option.sif_opis_plac}
+                      </MenuItem>
+                    ))}
                 </Select>
               </FormControl>
             </Grid>

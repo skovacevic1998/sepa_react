@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, Grid, Typography } from "@mui/material";
+import { Alert, Box, Button, Grid, Snackbar, Typography } from "@mui/material";
 import { KonsigTable } from "../utilities/konsignacija/KonsigTable";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
@@ -24,6 +24,8 @@ export const UcitavanjeNaloga: React.FC<UcitavanjeNalogaProps> = ({ Item }) => {
   const currentGrupaNaloga = useSelector(
     (state: RootState) => state.grupaNaloga.currentGrupaNaloga
   );
+
+  const [alertOpenError, setAlertOpenError] = useState(false);
 
   const handleUcitavanjeNaloga = async () => {
     if (file) {
@@ -54,9 +56,10 @@ export const UcitavanjeNaloga: React.FC<UcitavanjeNalogaProps> = ({ Item }) => {
           }
         );
 
-        console.log(response.data);
         if (response.data && response.data !== "") {
           dispatch(setGrupaNaloga(response.data));
+        } else {
+          setAlertOpenError(true);
         }
       } catch (error) {
         console.error("Error:", error);
@@ -79,6 +82,10 @@ export const UcitavanjeNaloga: React.FC<UcitavanjeNalogaProps> = ({ Item }) => {
   useEffect(() => {
     fetchNalogList();
   }, [currentGrupaNaloga]);
+
+  const handleAlertClose = () => {
+    setAlertOpenError(false);
+  };
 
   const fetchNalogList = async () => {
     const storedTipGrupeNaloga = localStorage.getItem("tipGrupeNaloga");
@@ -145,14 +152,9 @@ export const UcitavanjeNaloga: React.FC<UcitavanjeNalogaProps> = ({ Item }) => {
         </Grid>
         <Grid item xs={12}>
           <Grid container justifyContent="right">
-            <Grid item xs={12} md={8} lg={4} justifyContent="center">
+            <Grid item xs={12} md={8} lg={2} justifyContent="center">
               <Item>
                 <Grid container justifyContent="space-evenly" spacing={2}>
-                  <Grid item>
-                    <Button variant="contained" color="error">
-                      Deaktiviraj naloge
-                    </Button>
-                  </Grid>
                   <Grid item>
                     <Box>
                       <input
@@ -168,6 +170,7 @@ export const UcitavanjeNaloga: React.FC<UcitavanjeNalogaProps> = ({ Item }) => {
                           color="primary"
                           component="span"
                           startIcon={<CloudUploadIcon />}
+                          disabled={currentGrupaNaloga !== null}
                         >
                           Učitaj datoteku
                         </Button>
@@ -179,6 +182,20 @@ export const UcitavanjeNaloga: React.FC<UcitavanjeNalogaProps> = ({ Item }) => {
             </Grid>
           </Grid>
         </Grid>
+        <Snackbar
+          open={alertOpenError}
+          autoHideDuration={5000}
+          onClose={handleAlertClose}
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        >
+          <Alert
+            onClose={handleAlertClose}
+            severity="error"
+            sx={{ width: "100%" }}
+          >
+            Desila se greška pri izvršenju akcije.
+          </Alert>
+        </Snackbar>
       </Grid>
     </>
   );
