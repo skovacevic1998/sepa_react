@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { clearUser, setUser } from "./../../redux/slice";
@@ -14,7 +13,8 @@ import { ThemeProvider } from "@mui/material/styles";
 import Logo from "./../../assets/vub_logo.png";
 import { Item } from "../utilities/default/Item";
 import { Footer } from "../utilities/default/Footer";
-import { isEmailValid } from "../utilities/regex/Validation";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 interface LoginProps {
   getBackgroundColor: () => string;
@@ -31,68 +31,48 @@ interface User {
   prezime: string;
   roles: string;
   username: string;
-  br_blagajne: number;
 }
 
-export const Login: React.FC<LoginProps> = ({ getBackgroundColor, theme }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loginFailed, setLoginFailed] = useState(false);
+const validationSchema = Yup.object({
+  email: Yup.string()
+    .email("Neispravan format email-a")
+    .required("Email je obavezan"),
+  password: Yup.string().required("Lozinka je obavezna"),
+});
 
+export const Login: React.FC<LoginProps> = ({ getBackgroundColor, theme }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleFocus = () => {
-    setLoginFailed(false);
-  };
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: async (values) => {
+      try {
+        const response = await axios.post("http://localhost:8080/api/login", {
+          email: values.email,
+          password: values.password,
+        });
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (!isEmailValid(email)) {
-      setLoginFailed(true);
-      return;
-    } else {
-      setLoginFailed(false);
-    }
-
-    try {
-      const response = await axios.post("http://localhost:8080/api/login", {
-        email,
-        password,
-      });
-
-      if (response.data && response.status === 200) {
-        const userData: User = response.data;
-
-        if (isDataSerializable(userData)) {
+        if (response.data && response.status === 200) {
+          const userData: User = response.data;
           dispatch(setUser(userData));
           navigate("/home");
         } else {
-          console.error("Received non-serializable data:", userData);
+          dispatch(clearUser());
+          navigate("/");
+          throw new Error("Login failed");
         }
-      } else {
+      } catch (error) {
         dispatch(clearUser());
-        setLoginFailed(true);
         navigate("/");
-        throw new Error("Login failed");
+        console.error("Login error:", error);
       }
-    } catch (error) {
-      dispatch(clearUser());
-      setLoginFailed(true);
-      navigate("/");
-      console.error("Login error:", error);
-    }
-  };
-
-  const isDataSerializable = (data: any) => {
-    try {
-      JSON.stringify(data);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
+    },
+  });
 
   return (
     <ThemeProvider theme={theme}>
@@ -125,39 +105,41 @@ export const Login: React.FC<LoginProps> = ({ getBackgroundColor, theme }) => {
                   <Typography component="h1" variant="h5">
                     Login
                   </Typography>
-                  <Box
-                    component="form"
-                    onSubmit={handleSubmit}
-                    noValidate
-                    sx={{ mt: 1 }}
-                  >
+                  <form onSubmit={formik.handleSubmit} noValidate>
                     <TextField
                       margin="normal"
-                      required
                       fullWidth
                       id="email"
                       label="Email Address"
                       name="email"
                       autoComplete="email"
                       autoFocus
-                      value={email}
-                      onFocus={handleFocus}
-                      error={loginFailed}
-                      onChange={(e) => setEmail(e.target.value)}
+                      value={formik.values.email}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      error={
+                        formik.touched.email && Boolean(formik.errors.email)
+                      }
+                      helperText={formik.touched.email && formik.errors.email}
                     />
                     <TextField
                       margin="normal"
-                      required
                       fullWidth
                       name="password"
                       label="Password"
                       type="password"
                       id="password"
                       autoComplete="current-password"
-                      value={password}
-                      onFocus={handleFocus}
-                      error={loginFailed}
-                      onChange={(e) => setPassword(e.target.value)}
+                      value={formik.values.password}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      error={
+                        formik.touched.password &&
+                        Boolean(formik.errors.password)
+                      }
+                      helperText={
+                        formik.touched.password && formik.errors.password
+                      }
                     />
                     <Button
                       fullWidth
@@ -174,7 +156,7 @@ export const Login: React.FC<LoginProps> = ({ getBackgroundColor, theme }) => {
                         </Link>
                       </Grid>
                     </Grid>
-                  </Box>
+                  </form>
                 </div>
               </Item>
             </Container>

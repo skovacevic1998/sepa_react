@@ -102,7 +102,6 @@ export const UcitavanjeNaloga: React.FC<UcitavanjeNalogaProps> = ({ Item }) => {
           }
         );
 
-        console.log(currentNalogList);
         if (response.data) {
           dispatch(replaceUnosNalogaList(response.data));
         }
@@ -163,6 +162,7 @@ export const UcitavanjeNaloga: React.FC<UcitavanjeNalogaProps> = ({ Item }) => {
                         onChange={handleFileChange}
                         style={{ display: "none" }}
                         id="fileInput"
+                        disabled={currentGrupaNaloga !== null}
                       />
                       <label htmlFor="fileInput">
                         <Button

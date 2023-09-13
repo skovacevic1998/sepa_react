@@ -1,4 +1,6 @@
 import * as React from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -11,79 +13,63 @@ import Container from "@mui/material/Container";
 import Logo from "./../../assets/vub_logo.png";
 import { Item } from "../utilities/default/Item";
 import { Footer } from "../utilities/default/Footer";
-import { useState } from "react";
 import axios from "axios";
 import Alert from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
-import { isEmailValid } from "../utilities/regex/Validation";
 
 interface RegisterProps {
   getBackgroundColor: any;
 }
 
 export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
-  const [imeRegister, setImeRegister] = useState("");
-  const [prezimeRegister, setPrezimeRegister] = useState("");
-  const [usernameRegister, setUsernameRegister] = useState("");
-  const [lokacijaRegister, setLokacijaRegister] = useState("");
-  const [emailRegister, setEmailRegister] = useState("");
-  const [passwordRegister, setPasswordRegister] = useState("");
-  const [rePasswordRegister, setRePasswordRegister] = useState("");
+  const validationSchema = Yup.object().shape({
+    imeRegister: Yup.string().required("Ime je obavezno polje"),
+    prezimeRegister: Yup.string().required("Prezime je obavezno polje"),
+    lokacijaRegister: Yup.string().required("Lokacija je obavezno polje"),
+    emailRegister: Yup.string()
+      .email("Neispravan format email-a")
+      .required("Email adresa je obavezna"),
+    passwordRegister: Yup.string().required("Lozinka je obavezna"),
+    rePasswordRegister: Yup.string()
+      .oneOf([Yup.ref("passwordRegister"), ""], "Lozinke se ne podudaraju")
+      .required("Potvrdite lozinku"),
+    usernameRegister: Yup.string()
+      .required("Korisničko ime je obavezno polje")
+      .test("is-unique", "Korisničko ime već postoji", async (value) => {
+        try {
+          const response = await axios.get(
+            `http://localhost:8080/api/checkUsername?username=${value}`
+          );
+          return response.data === false;
+        } catch (error) {
+          console.error("Username check error:", error);
+          return false;
+        }
+      }),
+  });
 
-  const [emailError, setEmailError] = useState("");
-  const handleEmailFocus = () => {
-    setEmailError("");
-  };
-  const [successAlertOpen, setSuccessAlertOpen] = useState(false);
+  const [successAlertOpen, setSuccessAlertOpen] = React.useState(false);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (!isEmailValid(emailRegister)) {
-      setEmailError("Neispravan format email-a");
-      return;
-    } else {
-      setEmailError("");
-    }
-
+  const handleSubmit = async (
+    values: any,
+    { setSubmitting, resetForm }: any
+  ) => {
     try {
-      const response = await axios.post("http://localhost:8080/api/register", {
-        imeRegister,
-        prezimeRegister,
-        usernameRegister,
-        lokacijaRegister,
-        emailRegister,
-        passwordRegister,
-        rePasswordRegister,
-      });
+      const response = await axios.post(
+        "http://localhost:8080/api/register",
+        values
+      );
 
       if (response.data && response.status === 200) {
-        clearInputFields();
-
         setSuccessAlertOpen(true);
+        resetForm();
+        setSubmitting(false);
       } else {
-        setEmailError("Uneseni email postoji");
         throw new Error("Register failed");
       }
     } catch (error) {
-      setEmailError("Uneseni email postoji, pokušajte ponovno!");
       console.error("Register error:", error);
     }
-  };
-
-  const clearInputFields = () => {
-    setImeRegister("");
-    setPrezimeRegister("");
-    setUsernameRegister("");
-    setLokacijaRegister("");
-    setEmailRegister("");
-    setPasswordRegister("");
-    setRePasswordRegister("");
-  };
-
-  const handleSuccessAlertClose = () => {
-    setSuccessAlertOpen(false);
-    clearInputFields();
   };
 
   return (
@@ -108,127 +94,168 @@ export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
             <Typography component="h1" variant="h5">
               Registracija korisnika
             </Typography>
-            <Box
-              component="form"
-              noValidate
+            <Formik
+              initialValues={{
+                imeRegister: "",
+                prezimeRegister: "",
+                usernameRegister: "",
+                lokacijaRegister: "",
+                emailRegister: "",
+                passwordRegister: "",
+                rePasswordRegister: "",
+              }}
+              validationSchema={validationSchema}
               onSubmit={handleSubmit}
-              sx={{ mt: 3 }}
             >
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    name="imeRegister"
-                    required
+              {({ isSubmitting, isValid, touched, errors }) => (
+                <Form>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                      <Field
+                        name="imeRegister"
+                        required
+                        fullWidth
+                        id="imeRegister"
+                        label="Ime"
+                        autoFocus
+                        as={TextField}
+                        error={touched.imeRegister && !!errors.imeRegister}
+                      />
+                      <ErrorMessage
+                        name="imeRegister"
+                        component="div"
+                        className="error"
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Field
+                        name="prezimeRegister"
+                        required
+                        fullWidth
+                        id="prezimeRegister"
+                        label="Prezime"
+                        as={TextField}
+                        error={
+                          touched.prezimeRegister && !!errors.prezimeRegister
+                        }
+                      />
+                      <ErrorMessage
+                        name="prezimeRegister"
+                        component="div"
+                        className="error"
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Field
+                        name="usernameRegister"
+                        required
+                        fullWidth
+                        id="usernameRegister"
+                        label="Korisničko ime"
+                        as={TextField}
+                        error={
+                          touched.usernameRegister && !!errors.usernameRegister
+                        }
+                      />
+                      <ErrorMessage
+                        name="usernameRegister"
+                        component="div"
+                        className="error"
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Field
+                        name="lokacijaRegister"
+                        required
+                        fullWidth
+                        id="lokacijaRegister"
+                        label="Lokacija"
+                        as={TextField}
+                        error={
+                          touched.lokacijaRegister && !!errors.lokacijaRegister
+                        }
+                      />
+                      <ErrorMessage
+                        name="lokacijaRegister"
+                        component="div"
+                        className="error"
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Field
+                        name="emailRegister"
+                        required
+                        fullWidth
+                        id="emailRegister"
+                        label="Email adresa"
+                        as={TextField}
+                        error={touched.emailRegister && !!errors.emailRegister}
+                      />
+                      <ErrorMessage
+                        name="emailRegister"
+                        component="div"
+                        className="error"
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Field
+                        name="passwordRegister"
+                        required
+                        fullWidth
+                        type="password"
+                        id="passwordRegister"
+                        label="Lozinka"
+                        as={TextField}
+                        error={
+                          touched.passwordRegister && !!errors.passwordRegister
+                        }
+                      />
+                      <ErrorMessage
+                        name="passwordRegister"
+                        component="div"
+                        className="error"
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Field
+                        name="rePasswordRegister"
+                        required
+                        fullWidth
+                        type="password"
+                        id="rePasswordRegister"
+                        label="Potvrdi lozinku"
+                        as={TextField}
+                        error={
+                          touched.rePasswordRegister &&
+                          !!errors.rePasswordRegister
+                        }
+                      />
+                      <ErrorMessage
+                        name="rePasswordRegister"
+                        component="div"
+                        className="error"
+                      />
+                    </Grid>
+                  </Grid>
+                  <Button
+                    type="submit"
                     fullWidth
-                    id="imeRegister"
-                    label="Ime"
-                    autoFocus
-                    value={imeRegister}
-                    onChange={(e: {
-                      target: { value: React.SetStateAction<string> };
-                    }) => setImeRegister(e.target.value)}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    required
-                    fullWidth
-                    id="prezimeRegister"
-                    label="Prezime"
-                    name="prezimeRegister"
-                    value={prezimeRegister}
-                    onChange={(e: {
-                      target: { value: React.SetStateAction<string> };
-                    }) => setPrezimeRegister(e.target.value)}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    required
-                    fullWidth
-                    id="usernameRegister"
-                    label="Korisničko ime"
-                    name="usernameRegister"
-                    value={usernameRegister}
-                    onChange={(e: {
-                      target: { value: React.SetStateAction<string> };
-                    }) => setUsernameRegister(e.target.value)}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    required
-                    fullWidth
-                    id="lokacijaRegister"
-                    label="Lokacija"
-                    name="lokacijaRegister"
-                    value={lokacijaRegister}
-                    onChange={(e: {
-                      target: { value: React.SetStateAction<string> };
-                    }) => setLokacijaRegister(e.target.value)}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    fullWidth
-                    id="emailRegister"
-                    label="Email adresa"
-                    name="emailRegister"
-                    value={emailRegister}
-                    onChange={(e: {
-                      target: { value: React.SetStateAction<string> };
-                    }) => setEmailRegister(e.target.value)}
-                    error={!!emailError}
-                    helperText={emailError}
-                    onFocus={handleEmailFocus}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    required
-                    fullWidth
-                    name="passwordRegister"
-                    label="Lozinka"
-                    type="password"
-                    id="passwordRegister"
-                    value={passwordRegister}
-                    onChange={(e: {
-                      target: { value: React.SetStateAction<string> };
-                    }) => setPasswordRegister(e.target.value)}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    required
-                    fullWidth
-                    name="rePasswordRegister"
-                    label="Potvrdi lozinku"
-                    type="password"
-                    id="rePasswordRegister"
-                    value={rePasswordRegister}
-                    onChange={(e: {
-                      target: { value: React.SetStateAction<string> };
-                    }) => setRePasswordRegister(e.target.value)}
-                  />
-                </Grid>
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2 }}
+                    disabled={isSubmitting || !isValid}
+                  >
+                    Registriraj
+                  </Button>
+                </Form>
+              )}
+            </Formik>
+            <Grid container justifyContent="flex-end">
+              <Grid item>
+                <Link href="/" variant="body2">
+                  Imate korisnički račun? Logirajte se.
+                </Link>
               </Grid>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
-                Registriraj
-              </Button>
-              <Grid container justifyContent="flex-end">
-                <Grid item>
-                  <Link href="/" variant="body2">
-                    Imate korisnički račun? Logirajte se.
-                  </Link>
-                </Grid>
-              </Grid>
-            </Box>
+            </Grid>
           </Box>
         </Item>
         <Footer getBackgroundColor={getBackgroundColor} />
@@ -236,11 +263,11 @@ export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
       <Snackbar
         open={successAlertOpen}
         autoHideDuration={5000}
-        onClose={handleSuccessAlertClose}
+        onClose={() => setSuccessAlertOpen(false)}
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       >
         <Alert
-          onClose={handleSuccessAlertClose}
+          onClose={() => setSuccessAlertOpen(false)}
           severity="success"
           sx={{ width: "100%" }}
         >
