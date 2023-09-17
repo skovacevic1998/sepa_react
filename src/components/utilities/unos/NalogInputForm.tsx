@@ -483,18 +483,9 @@ export const NalogInputForm: React.FC<NalogInputProps> = ({ Item }) => {
         </Grid>
 
         <Grid container justifyContent="right">
-          <Grid item xs={12} md={8} lg={3} justifyContent="center">
+          <Grid item xs={12} md={8} lg={2} justifyContent="center">
             <Item>
               <Grid container justifyContent="space-evenly" spacing={2}>
-                <Grid item>
-                  <Button
-                    style={{ backgroundColor: "#e99516" }}
-                    variant="contained"
-                    onClick={resetFormToInitialValues}
-                  >
-                    Pokušaj ponovno
-                  </Button>
-                </Grid>
                 <Grid item>
                   <Button
                     variant="contained"

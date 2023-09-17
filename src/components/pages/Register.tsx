@@ -22,13 +22,29 @@ interface RegisterProps {
 }
 
 export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
+  const [emailExists, setEmailExists] = React.useState(false);
+
   const validationSchema = Yup.object().shape({
     imeRegister: Yup.string().required("Ime je obavezno polje"),
     prezimeRegister: Yup.string().required("Prezime je obavezno polje"),
     lokacijaRegister: Yup.string().required("Lokacija je obavezno polje"),
     emailRegister: Yup.string()
       .email("Neispravan format email-a")
-      .required("Email adresa je obavezna"),
+      .required("Email adresa je obavezna")
+      .test("is-unique", "Odabrani email postoji", async function (value) {
+        if (!value) return true; // Skip validation if the email field is empty
+
+        try {
+          const response = await axios.get(
+            `http://localhost:8080/api/checkEmail?email=${value}`
+          );
+          setEmailExists(response.data); // Set the email existence state
+          return !response.data; // Return true if email does not exist
+        } catch (error) {
+          console.error("Email check error:", error);
+          return false;
+        }
+      }),
     passwordRegister: Yup.string().required("Lozinka je obavezna"),
     rePasswordRegister: Yup.string()
       .oneOf([Yup.ref("passwordRegister"), ""], "Lozinke se ne podudaraju")
@@ -189,12 +205,19 @@ export const Register: React.FC<RegisterProps> = ({ getBackgroundColor }) => {
                         id="emailRegister"
                         label="Email adresa"
                         as={TextField}
-                        error={touched.emailRegister && !!errors.emailRegister}
+                        error={
+                          (touched.emailRegister && !!errors.emailRegister) ||
+                          (emailExists && !errors.emailRegister)
+                        }
                       />
                       <ErrorMessage
                         name="emailRegister"
                         component="div"
-                        className="error"
+                        className={`error ${
+                          emailExists && !errors.emailRegister
+                            ? "red-error"
+                            : ""
+                        }`}
                       />
                     </Grid>
                     <Grid item xs={6}>

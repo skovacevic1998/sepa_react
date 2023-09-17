@@ -271,7 +271,7 @@ export const Profil: React.FC<ProfilProps> = ({
                     sx={{ mt: 3, mb: 2 }}
                     onClick={handleUpdate}
                   >
-                    Save Changes
+                    SPREMI IZMJENE
                   </Button>
                 ) : (
                   <Button
@@ -281,7 +281,7 @@ export const Profil: React.FC<ProfilProps> = ({
                     sx={{ mt: 3, mb: 2 }}
                     onClick={() => setIsEditing(true)}
                   >
-                    Edit Profile
+                    UREDI PROFIL
                   </Button>
                 )}
               </Box>
