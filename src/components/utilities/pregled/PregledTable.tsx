@@ -216,11 +216,7 @@ export function PregledTable() {
           />
         </Grid>
         <Grid item>
-          <Button
-            variant="contained"
-            disabled={currentUser?.roles !== "Admin"}
-            onClick={handleSearchClick}
-          >
+          <Button variant="contained" onClick={handleSearchClick}>
             Pregled podataka
           </Button>
         </Grid>

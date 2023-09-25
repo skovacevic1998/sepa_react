@@ -4,11 +4,7 @@ import { KonsigTable } from "../utilities/konsignacija/KonsigTable";
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import { RootState } from "../../redux/store";
 import { useDispatch } from "react-redux";
-import {
-  addUnosNaloga,
-  updateGrupaNaloga,
-  updateUnosNalogaList,
-} from "../../redux/slice";
+import { updateGrupaNaloga, updateUnosNalogaList } from "../../redux/slice";
 import { clearGrupaNaloga } from "../../redux/slice";
 import { clearUnosNalogaList } from "../../redux/slice";
 import axios from "axios";
@@ -16,19 +12,6 @@ import { replaceUnosNalogaList } from "../../redux/slice";
 
 interface ThemeProp {
   Item: any;
-}
-
-interface UnosNaloga {
-  id: string;
-  brRac: string;
-  iznUpl: number;
-  iznIspl: number;
-  date: string;
-  pnb: string;
-  naknada: number;
-  sifOpisPlac: number;
-  sifNamjene: string;
-  status: string;
 }
 
 export const Konsignacija: React.FC<ThemeProp> = ({ Item }) => {
